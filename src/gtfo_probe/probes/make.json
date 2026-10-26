@@ -1,0 +1,106 @@
+{
+  "probes": [
+    {
+      "id": "make.dry-run.control",
+      "tool": "make",
+      "argv": [
+        "-n",
+        "-f",
+        "<<makefile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-n` prints the recipe without running it.",
+      "flag": "-n"
+    },
+    {
+      "id": "make.question.control",
+      "tool": "make",
+      "argv": [
+        "-q",
+        "-f",
+        "<<makefile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-q` only answers 'is it up to date?' and runs no recipe.",
+      "flag": "-q"
+    },
+    {
+      "id": "make.runner",
+      "tool": "make",
+      "argv": [
+        "-f",
+        "<<makefile>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "BY DESIGN: make runs the recipes of the Makefile it reads.",
+      "flag": "-f",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "make.directory",
+      "tool": "make",
+      "argv": [
+        "-C",
+        "<<data>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-C DIR` reads DIR/Makefile and runs it - an agent that can write a Makefile can run anything.",
+      "flag": "-C",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "make.eval",
+      "tool": "make",
+      "argv": [
+        "--eval=x:;@<<canary_exec>>",
+        "x"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--eval=STRING` evaluates a makefile line given on the command line; no Makefile file is needed.",
+      "flag": "--eval",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "make.eval-abbrev",
+      "tool": "make",
+      "argv": [
+        "--ev=x:;@<<canary_exec>>",
+        "x"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "Unambiguous prefix of --eval works.",
+      "flag": "--ev",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "make.touch",
+      "tool": "make",
+      "argv": [
+        "-t",
+        "-f",
+        "<<makefile>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-t` 'touches' targets: creates a file named after the target instead of running the recipe.",
+      "flag": "-t"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "probes": [
+    {
+      "id": "sed.print.control",
+      "tool": "sed",
+      "argv": [
+        "-n",
+        "p",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: plain print."
+    },
+    {
+      "id": "sed.w-command",
+      "tool": "sed",
+      "argv": [
+        "-n",
+        "w <<out>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "The `w FILE` script command writes lines to FILE.",
+      "flag": "w"
+    },
+    {
+      "id": "sed.s-w-flag",
+      "tool": "sed",
+      "argv": [
+        "s/hello/x/w <<out>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "The `w FILE` flag of the s command writes to FILE.",
+      "flag": "s///w"
+    },
+    {
+      "id": "sed.in-place",
+      "tool": "sed",
+      "argv": [
+        "-i",
+        "s/hello/HELLO/",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-i` edits the file in place (default sed only reads).",
+      "flag": "-i"
+    },
+    {
+      "id": "sed.e-command",
+      "tool": "sed",
+      "argv": [
+        "1e <<canary_exec>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "GNU `e COMMAND` executes COMMAND.",
+      "flag": "e"
+    },
+    {
+      "id": "sed.s-e-flag",
+      "tool": "sed",
+      "argv": [
+        "s,hello,<<canary_exec>>,e",
+        "<<hello>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "GNU `s///e` executes the pattern space as a command.",
+      "flag": "s///e"
+    },
+    {
+      "id": "sed.sandbox.control",
+      "tool": "sed",
+      "argv": [
+        "--sandbox",
+        "-n",
+        "w <<out>>",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL/mitigation: `--sandbox` rejects e/w/r commands, so no effect is expected.",
+      "flag": "--sandbox"
+    }
+  ]
+}

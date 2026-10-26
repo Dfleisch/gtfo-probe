@@ -1,0 +1,145 @@
+{
+  "probes": [
+    {
+      "id": "find.name.control",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-name",
+        "*.txt"
+      ],
+      "expect": [],
+      "description": "CONTROL: plain search."
+    },
+    {
+      "id": "find.exec",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-exec",
+        "<<canary_exec>>",
+        "{}",
+        ";"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-exec CMD ;` runs CMD for each match.",
+      "flag": "-exec"
+    },
+    {
+      "id": "find.execdir",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-execdir",
+        "<<canary_exec>>",
+        "{}",
+        ";"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-execdir` is `-exec` run from the match's directory.",
+      "flag": "-execdir"
+    },
+    {
+      "id": "find.fprint",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-fprint",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-fprint FILE` writes results to FILE.",
+      "flag": "-fprint"
+    },
+    {
+      "id": "find.fprintf",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-fprintf",
+        "<<out>>",
+        "%p\\n"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-fprintf FILE FORMAT` writes formatted results to FILE.",
+      "flag": "-fprintf"
+    },
+    {
+      "id": "find.fls",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-fls",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-fls FILE` writes an ls-style listing to FILE.",
+      "flag": "-fls"
+    },
+    {
+      "id": "find.delete",
+      "tool": "find",
+      "argv": [
+        "<<victim>>",
+        "-delete"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-delete` removes every match.",
+      "flag": "-delete"
+    },
+    {
+      "id": "find.print0.control",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-print0"
+      ],
+      "expect": [],
+      "description": "CONTROL: -print0 prints NUL-separated names to stdout and writes nothing."
+    },
+    {
+      "id": "find.fprint0",
+      "tool": "find",
+      "argv": [
+        ".",
+        "-maxdepth",
+        "0",
+        "-fprint0",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-fprint0 FILE` writes NUL-separated names to FILE (truncating it), like -fprint. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-fprint0",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "probes": [
+    {
+      "id": "pip.version.control",
+      "tool": "pip",
+      "argv": [
+        "--version"
+      ],
+      "expect": [],
+      "description": "CONTROL: print the version."
+    },
+    {
+      "id": "pip.list.control",
+      "tool": "pip",
+      "argv": [
+        "list"
+      ],
+      "expect": [],
+      "description": "CONTROL: list installed packages."
+    },
+    {
+      "id": "pip.config-list.control",
+      "tool": "pip",
+      "argv": [
+        "config",
+        "list"
+      ],
+      "expect": [],
+      "description": "CONTROL: show configuration.",
+      "flag": ""
+    },
+    {
+      "id": "pip.log",
+      "tool": "pip",
+      "argv": [
+        "list",
+        "--log=<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--log=FILE` appends pip's log to FILE.",
+      "flag": "--log"
+    },
+    {
+      "id": "pip.config-set",
+      "tool": "pip",
+      "argv": [
+        "config",
+        "--user",
+        "set",
+        "global.timeout",
+        "5"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`pip config set` writes ~/.config/pip/pip.conf: a persistent change to every later pip run (e.g. a malicious `index-url`).",
+      "flag": "set"
+    },
+    {
+      "id": "pip.install-local-dir",
+      "tool": "pip",
+      "argv": [
+        "install",
+        "--no-index",
+        "--no-deps",
+        "--target=<<outdir>>/t",
+        "<<pypkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "Installing a local source directory BUILDS it, and building runs the project's build backend (arbitrary code).",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "pip.download-local-dir",
+      "tool": "pip",
+      "argv": [
+        "download",
+        "--no-index",
+        "--no-deps",
+        "--dest=<<outdir>>",
+        "<<pypkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "SURPRISE: even `pip download` (which sounds like 'fetch only') builds a local source directory to get its metadata, so the build backend runs.",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "pip.wheel-local-dir",
+      "tool": "pip",
+      "argv": [
+        "wheel",
+        "--no-index",
+        "--no-deps",
+        "--wheel-dir=<<outdir>>",
+        "<<pypkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`pip wheel` builds, so the build backend runs.",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "pip.install-plain.control",
+      "tool": "pip",
+      "argv": [
+        "install",
+        "--no-index",
+        "--no-deps",
+        "<<pypkg>>"
+      ],
+      "expect": [],
+      "description": "CONTROL (this machine only): Debian marks the system Python 'externally managed' (PEP 668), so a plain `pip install` is refused before building. On a machine without that marker this would build and run the backend.",
+      "flag": ""
+    },
+    {
+      "id": "pip.index-url",
+      "tool": "pip",
+      "argv": [
+        "download",
+        "--retries=0",
+        "--timeout=2",
+        "--trusted-host=192.0.2.1",
+        "--index-url=<<url>>",
+        "requests"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "`--index-url=URL` makes pip fetch package lists from URL (a hostile index = hostile packages).",
+      "flag": "--index-url"
+    },
+    {
+      "id": "pip.index-url-abbrev",
+      "tool": "pip",
+      "argv": [
+        "download",
+        "--retries=0",
+        "--timeout=2",
+        "--trusted-host=192.0.2.1",
+        "--index=<<url>>",
+        "requests"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "Unambiguous prefix works (pip uses optparse).",
+      "flag": "--index"
+    },
+    {
+      "id": "pip.python",
+      "tool": "pip",
+      "argv": [
+        "--python=<<canary_exec>>",
+        "list"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--python PROG` re-runs pip under PROG (documented: 'Run pip with the specified Python interpreter'), so any pip command line can execute an arbitrary program. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--python",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "pip.python-abbrev",
+      "tool": "pip",
+      "argv": [
+        "--pyth=<<canary_exec>>",
+        "list"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "Unambiguous prefix of --python works the same (optparse prefix matching). Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--pyth",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

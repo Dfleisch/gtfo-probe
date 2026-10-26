@@ -1,0 +1,112 @@
+{
+  "probes": [
+    {
+      "id": "sort.print.control",
+      "tool": "sort",
+      "argv": [
+        "<<unsorted>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: sorting a file to stdout."
+    },
+    {
+      "id": "sort.unique.control",
+      "tool": "sort",
+      "argv": [
+        "-u",
+        "<<unsorted>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-u` removes duplicates, still prints to stdout.",
+      "flag": "-u"
+    },
+    {
+      "id": "sort.output",
+      "tool": "sort",
+      "argv": [
+        "--output=<<out>>",
+        "<<unsorted>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--output=FILE` writes the result to FILE (even FILE = the input file, so it can overwrite).",
+      "flag": "--output"
+    },
+    {
+      "id": "sort.output-abbrev",
+      "tool": "sort",
+      "argv": [
+        "--outp=<<out>>",
+        "<<unsorted>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Unambiguous prefix of --output works.",
+      "flag": "--outp"
+    },
+    {
+      "id": "sort.output-short",
+      "tool": "sort",
+      "argv": [
+        "-o",
+        "<<out>>",
+        "<<unsorted>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-o FILE` is the short spelling.",
+      "flag": "-o"
+    },
+    {
+      "id": "sort.merge.control",
+      "tool": "sort",
+      "argv": [
+        "-m",
+        "--batch-size=2",
+        "<<unsorted>>",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "CONTROL for compress-program: merging 3 files with batch size 2 (forces a temporary file) but WITHOUT --compress-program runs nothing.",
+      "flag": "--batch-size"
+    },
+    {
+      "id": "sort.compress-program",
+      "tool": "sort",
+      "argv": [
+        "-m",
+        "--batch-size=2",
+        "--compress-program=<<canary_exec>>",
+        "<<unsorted>>",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--compress-program=PROG` runs PROG to compress temporary files; the merge needs a temp file here, so PROG runs. (With tiny input and no spill sort never starts it.)",
+      "flag": "--compress-program"
+    },
+    {
+      "id": "sort.compress-program-abbrev",
+      "tool": "sort",
+      "argv": [
+        "-m",
+        "--batch-size=2",
+        "--compress=<<canary_exec>>",
+        "<<unsorted>>",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--compress=` (a prefix) works too.",
+      "flag": "--compress"
+    }
+  ]
+}

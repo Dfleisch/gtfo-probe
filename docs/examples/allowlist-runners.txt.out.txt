@@ -1,0 +1,154 @@
+gtfo-probe check: docs/examples/allowlist-runners.txt (format: plain)
+capability DB: generated 2026-10-26T16:18:11Z by gtfo-probe 0.1.0
+tool versions probed: cat@9.7, cp@9.7, curl@8.14.1, diff@3.10, env@9.7, find@4.10.0, gawk@5.2.1, git@2.47.3, grep@3.11, gzip@1.13, head@9.7, ls@9.7, make@4.4.1, mawk@1.3.4, mv@9.7, node@20.19.2, npm@11.21.1, npx@11.21.1, pip@25.1.1, python3@3.13.5, rsync@3.5.0, scp@10.0, sed@4.9, sort@9.7, ssh@10.0, tail@9.7, tar@1.35, unzip@6.00, wget@1.25.0, xargs@4.10.0, zip@3.0
+runner tools (critical by design, they run what you give them): env@9.7, make@4.4.1, node@20.19.2, npx@11.21.1, python3@3.13.5, xargs@4.10.0
+Results reflect only the probes that were run, on the tool versions listed above.
+"no known risk" means probes saw no effect; "UNKNOWN" means nothing was tested. Neither means safe.
+Not modelled: READING files (a `cat` or `grep` entry can still read secrets).
+
+[CRITICAL] env   [env ...]
+    critical exec     BY DESIGN (runs any program you hand it)  (probe env.runner, confirmed, env@9.7)
+             evidence: canary program ran: canary-exec ran: argv=
+    fix: remove this entry or pin the exact command: end the line with ` $` and write the whole command, e.g. `env <the exact arguments> $`. There is no safe flag list for a runner tool.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] xargs   [xargs ...]
+    critical exec     BY DESIGN (runs any program you hand it)  (probe xargs.runner, confirmed, xargs@4.10.0)
+             evidence: canary program ran: canary-exec ran: argv=
+    fix: remove this entry or pin the exact command: end the line with ` $` and write the whole command, e.g. `xargs <the exact arguments> $`. There is no safe flag list for a runner tool.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] python3   [python3 ...]
+    critical exec     BY DESIGN (runs any program you hand it)  (probe python3.code-exec, confirmed, python3@3.13.5)
+             evidence: canary program ran: canary-exec ran: argv=
+    fix: remove this entry or pin the exact command: end the line with ` $` and write the whole command, e.g. `python3 <the exact arguments> $`. There is no safe flag list for a runner tool.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] make   [make ...]
+    critical exec     BY DESIGN (runs any program you hand it)  (probe make.directory, confirmed, make@4.4.1)
+             evidence: canary program ran: canary-exec ran: argv=
+    fix: remove this entry or pin the exact command: end the line with ` $` and write the whole command, e.g. `make <the exact arguments> $`. There is no safe flag list for a runner tool.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] npm run   [npm run ...]
+    critical exec     BY DESIGN (runs any program you hand it)  (probe npm.run, confirmed, npm@11.21.1)
+             evidence: canary program ran: canary-exec ran: argv=
+    low      fs_write in plain use  (probe npm.ls.baseline, confirmed, npm@11.21.1)
+             evidence: file created: home/.npm
+    fix: remove this entry or pin the exact command: end the line with ` $` and write the whole command, e.g. `npm run <the exact arguments> $`. There is no safe flag list for a runner tool.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[LOW] npm ls $   [npm ls]
+    low      fs_write in plain use  (probe npm.ls.baseline, confirmed, npm@11.21.1)
+             evidence: file created: home/.npm
+    fix: already an exact entry: the effect comes from the command itself; decide if that is acceptable.
+    note: exact entry: only flags literally written in it were checked
+
+[CRITICAL] sort   [sort ...]
+    critical exec     via --compress-program  (probe sort.compress-program, confirmed, sort@9.7)
+             evidence: canary program ran: canary-exec ran: argv=
+             abbreviation: WORKS in a variant spelling, --compress (probe sort.compress-program-abbrev); deny by capability, not by flag string
+    high     fs_write via --output  (probe sort.output, confirmed, sort@9.7)
+             evidence: file created: out/probe-output.txt
+             abbreviation: WORKS in a variant spelling, --outp (probe sort.output-abbrev); deny by capability, not by flag string
+    high     fs_write via -o  (probe sort.output-short, confirmed, sort@9.7)
+             evidence: file created: out/probe-output.txt
+    fix: pin the exact command (end the line with ` $` and write the whole command, e.g. `sort <the exact arguments> $`), or remove this entry.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] rsync   [rsync ...]
+    critical exec     via --rsh  (probe rsync.rsh, confirmed, rsync@3.5.0)
+             evidence: canary program ran: canary-exec ran: argv=example.invalid rsync --server --sender -e.LsfxCIvu . /x
+             abbreviation: abbreviation --rs was rejected by this version (probe rsync.rsh-abbrev)
+    critical exec     via -e  (probe rsync.rsh-short, confirmed, rsync@3.5.0)
+             evidence: canary program ran: canary-exec ran: argv=example.invalid rsync --server --sender -e.LsfxCIvu . /x
+    high     fs_write via --delete  (probe rsync.delete, confirmed, rsync@3.5.0)
+             evidence: file deleted: data/Makefile
+    high     fs_write via --log-file  (probe rsync.log-file, confirmed, rsync@3.5.0)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via --only-write-batch  (probe rsync.only-write-batch, confirmed, rsync@3.5.0)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via --remove-source-files  (probe rsync.remove-source-files, confirmed, rsync@3.5.0)
+             evidence: file deleted: canary/victim.txt
+    high     fs_write via --write-batch  (probe rsync.write-batch, confirmed, rsync@3.5.0)
+             evidence: file created: out/hello.txt
+    medium   net      in plain use  (probe rsync.daemon-url, attempted, rsync@3.5.0)
+             evidence: network attempt: rsync: [Receiver] failed to connect to 192.0.2.1 (192.0.2.1): Network 
+    low      fs_write in plain use  (probe rsync.copy, confirmed, rsync@3.5.0)
+             evidence: file created: out/probe-output.txt
+    fix: pin the exact command (end the line with ` $` and write the whole command, e.g. `rsync <the exact arguments> $`), or remove this entry.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] ssh   [ssh ...]
+    critical exec     via -o ProxyCommand  (probe ssh.proxycommand, confirmed, ssh@10.0)
+             evidence: canary program ran: canary-exec ran: argv=
+             abbreviation: WORKS in a variant spelling, -oproxycommand (probe ssh.proxycommand-abbrev); deny by capability, not by flag string
+    high     fs_write via -E  (probe ssh.log-file, confirmed, ssh@10.0)
+             evidence: file created: out/probe-output.txt
+    medium   net      in plain use  (probe ssh.host, attempted, ssh@10.0)
+             evidence: network attempt: ssh: connect to host 192.0.2.1 port 22: Network is unreachable
+    medium   net      via -J  (probe ssh.jump-host, attempted, ssh@10.0)
+             evidence: network attempt: ssh: Could not resolve hostname example.invalid: Temporary failure in 
+    fix: pin the exact command (end the line with ` $` and write the whole command, e.g. `ssh <the exact arguments> $`), or remove this entry.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] awk   [awk ...]
+    critical exec     via cmd | getline  (probe gawk.getline-cmd, confirmed, gawk@5.2.1)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via print |  (probe gawk.pipe-out, confirmed, gawk@5.2.1)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via system()  (probe gawk.system, confirmed, gawk@5.2.1)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via |&  (probe gawk.coprocess, confirmed, gawk@5.2.1)
+             evidence: canary program ran: canary-exec ran: argv=
+    high     fs_write via --dump-variables  (probe gawk.dump-variables, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via --pretty-print  (probe gawk.pretty-print, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via --profile  (probe gawk.profile, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+             abbreviation: WORKS in a variant spelling, --prof (probe gawk.profile-abbrev); deny by capability, not by flag string
+    high     fs_write via -d  (probe gawk.dump-variables-short, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via -i inplace  (probe gawk.in-place, confirmed, gawk@5.2.1)
+             evidence: file modified: canary/victim.txt
+             abbreviation: WORKS in a variant spelling, --include (probe gawk.in-place-abbrev); deny by capability, not by flag string
+    high     fs_write via -o  (probe gawk.pretty-print-short, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via -p  (probe gawk.profile-short, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via >  (probe gawk.redirect-file, confirmed, gawk@5.2.1)
+             evidence: file created: out/probe-output.txt
+    medium   net      via /inet  (probe gawk.inet-tcp, attempted, gawk@5.2.1)
+             evidence: network attempt: gawk: cmd. line:1: fatal: cannot redirect to `/inet/tcp/0/192.0.2.1/9'
+    critical exec     via cmd | getline  (probe mawk.getline-cmd, confirmed, mawk@1.3.4)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via print |  (probe mawk.pipe-out, confirmed, mawk@1.3.4)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via system()  (probe mawk.system, confirmed, mawk@1.3.4)
+             evidence: canary program ran: canary-exec ran: argv=
+    high     fs_write via >  (probe mawk.redirect-file, confirmed, mawk@1.3.4)
+             evidence: file created: out/probe-output.txt
+    fix: pin the exact command (end the line with ` $` and write the whole command, e.g. `awk <the exact arguments> $`), or remove this entry.
+    note: `awk` is checked as gawk, mawk (whichever your system uses)
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[HIGH] gzip   [gzip ...]
+    high     fs_write via --decompress  (probe gzip.decompress, confirmed, gzip@1.13)
+             evidence: file created: data/sample.txt
+             abbreviation: WORKS in a variant spelling, --decomp (probe gzip.decompress-abbrev); deny by capability, not by flag string
+    high     fs_write via -r  (probe gzip.recursive, confirmed, gzip@1.13)
+             evidence: file deleted: data/Makefile
+    low      fs_write in plain use  (probe gzip.compress, confirmed, gzip@1.13)
+             evidence: file deleted: canary/victim.txt
+    fix: pin the exact command (end the line with ` $` and write the whole command, e.g. `gzip <the exact arguments> $`), or remove this entry.
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[no known risk] cat   [cat ...]
+    note: probes for this scope showed no effect; that is not a proof of safety
+
+[UNKNOWN] less   [less ...]
+    note: `less` is (or starts) a pager: it can run commands (`!cmd`, LESSOPEN) but only on a terminal, and gtfo-probe's sandbox has none, so it cannot be probed. This is a built-in hint, NOT probe data.
+    note: tool not in the capability DB: UNKNOWN (not tested), not safe
+
+summary: 13 entries (11 findings, 1 no_known_risk, 1 unknown_tool); findings by severity: 16 critical, 19 high, 4 low, 4 medium

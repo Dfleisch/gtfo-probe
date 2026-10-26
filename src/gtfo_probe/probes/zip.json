@@ -1,0 +1,85 @@
+{
+  "probes": [
+    {
+      "id": "zip.list.control",
+      "tool": "zip",
+      "argv": [
+        "-sf",
+        "<<zipfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-sf` shows the files in an archive.",
+      "flag": "-sf"
+    },
+    {
+      "id": "zip.create",
+      "tool": "zip",
+      "argv": [
+        "<<out>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Creating an archive writes a file.",
+      "flag": ""
+    },
+    {
+      "id": "zip.test-command",
+      "tool": "zip",
+      "argv": [
+        "-T",
+        "-TT",
+        "<<canary_exec>>",
+        "<<zipfile>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-TT CMD` replaces `unzip -t` as the archive tester with CMD (needs -T).",
+      "flag": "-TT"
+    },
+    {
+      "id": "zip.delete",
+      "tool": "zip",
+      "argv": [
+        "-d",
+        "<<zipfile>>",
+        "hello.txt"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-d` deletes entries from an existing archive (modifies it).",
+      "flag": "-d"
+    },
+    {
+      "id": "zip.move",
+      "tool": "zip",
+      "argv": [
+        "-m",
+        "<<out>>",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-m` MOVES files into the archive: the originals are deleted.",
+      "flag": "-m"
+    },
+    {
+      "id": "zip.copy-out",
+      "tool": "zip",
+      "argv": [
+        "-O",
+        "<<out>>",
+        "<<zipfile>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-O FILE` writes a copy of the archive to FILE.",
+      "flag": "-O"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "probes": [
+    {
+      "id": "gzip.test.control",
+      "tool": "gzip",
+      "argv": [
+        "-t",
+        "<<gzfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-t` tests integrity.",
+      "flag": "-t"
+    },
+    {
+      "id": "gzip.list.control",
+      "tool": "gzip",
+      "argv": [
+        "-l",
+        "<<gzfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-l` lists sizes.",
+      "flag": "-l"
+    },
+    {
+      "id": "gzip.stdout.control",
+      "tool": "gzip",
+      "argv": [
+        "-dc",
+        "<<gzfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-c` writes to stdout and keeps the original.",
+      "flag": "-c"
+    },
+    {
+      "id": "gzip.compress",
+      "tool": "gzip",
+      "argv": [
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Plain `gzip FILE` REPLACES FILE with FILE.gz (the original is deleted).",
+      "flag": ""
+    },
+    {
+      "id": "gzip.decompress",
+      "tool": "gzip",
+      "argv": [
+        "--decompress",
+        "<<gzfile>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--decompress FILE.gz` creates FILE and deletes FILE.gz.",
+      "flag": "--decompress"
+    },
+    {
+      "id": "gzip.decompress-abbrev",
+      "tool": "gzip",
+      "argv": [
+        "--decomp",
+        "<<gzfile>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Unambiguous prefix works (gzip uses getopt_long).",
+      "flag": "--decomp"
+    },
+    {
+      "id": "gzip.recursive",
+      "tool": "gzip",
+      "argv": [
+        "-r",
+        "<<data>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-r` walks a directory and compresses (replaces) every file in it.",
+      "flag": "-r"
+    }
+  ]
+}

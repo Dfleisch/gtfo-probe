@@ -1,0 +1,15 @@
+# Runner tools and the new milestone-3 tools, as one plain-text allowlist.
+# Same rules: `x` = x with ANY arguments; a trailing ` $` = exactly this.
+env
+xargs
+python3
+make
+npm run
+npm ls $
+sort
+rsync
+ssh
+awk
+gzip
+cat
+less

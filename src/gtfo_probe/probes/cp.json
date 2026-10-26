@@ -1,0 +1,82 @@
+{
+  "probes": [
+    {
+      "id": "cp.copy",
+      "tool": "cp",
+      "argv": [
+        "<<hello>>",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Copying creates a file: write-by-design.",
+      "flag": ""
+    },
+    {
+      "id": "cp.overwrite",
+      "tool": "cp",
+      "argv": [
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Copying onto an existing file overwrites it.",
+      "flag": ""
+    },
+    {
+      "id": "cp.no-clobber.control",
+      "tool": "cp",
+      "argv": [
+        "-n",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-n` refuses to overwrite an existing file, so nothing changes.",
+      "flag": "-n"
+    },
+    {
+      "id": "cp.target-directory",
+      "tool": "cp",
+      "argv": [
+        "--target-directory=<<outdir>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--target-directory=DIR` puts the copy in DIR.",
+      "flag": "--target-directory"
+    },
+    {
+      "id": "cp.target-directory-abbrev",
+      "tool": "cp",
+      "argv": [
+        "--target-d=<<outdir>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Unambiguous prefix works.",
+      "flag": "--target-d"
+    },
+    {
+      "id": "cp.recursive",
+      "tool": "cp",
+      "argv": [
+        "-r",
+        "<<data>>",
+        "<<outdir>>/d"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-r` copies whole directory trees.",
+      "flag": "-r"
+    }
+  ]
+}

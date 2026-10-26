@@ -1,0 +1,16 @@
+{
+  "probes": [
+    {
+      "id": "tail.lines.control",
+      "tool": "tail",
+      "argv": [
+        "-n",
+        "1",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: last lines of a file.",
+      "flag": "-n"
+    }
+  ]
+}

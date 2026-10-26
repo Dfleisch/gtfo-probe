@@ -1,0 +1,17 @@
+== sort  (sort@9.7) ==
+  help: sort --help                  used (4233 chars)
+  help: sort -h                      ignored: does not look like a help page
+  help: sort help                    ignored: does not look like a help page
+  parsed 30 options from help; tested 7; not tested (no hint) 21; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --compress-program
+        exec=confirmed; reproduced=True; known: sort.compress-program
+        argv: sort --compress-program=<<canary_exec>> -m --batch-size=2 <<unsorted>> <<hello>> <<victim>>
+    -o, --output
+        fs_write=confirmed; reproduced=True; known: sort.output
+        argv: sort --output=<<out>> <<unsorted>>
+  ran, no effect observed: 5
+      -i, --ignore-nonprinting; --random-source; -T, --temporary-directory; --parallel; -u, --unique
+  summary: 2 confirmed (2 already covered by hand probes, 0 new), 0 unconfirmed, 5 no effect/rejected/timeout  [0.44s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+

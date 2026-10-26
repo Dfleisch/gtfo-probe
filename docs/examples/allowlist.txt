@@ -1,0 +1,11 @@
+# Plain-text allowlist: one command pattern per line.
+# `git show` means "git show with ANY arguments". A trailing ` $` means "exactly this".
+git show
+git log
+git status $
+tar
+find
+sed
+curl
+git branch
+npm run build $

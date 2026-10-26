@@ -1,0 +1,25 @@
+{
+  "probes": [
+    {
+      "id": "ls.long.control",
+      "tool": "ls",
+      "argv": [
+        "-la"
+      ],
+      "expect": [],
+      "description": "CONTROL: long listing.",
+      "flag": "-la"
+    },
+    {
+      "id": "ls.recursive.control",
+      "tool": "ls",
+      "argv": [
+        "-R",
+        "<<data>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: recursive listing.",
+      "flag": "-R"
+    }
+  ]
+}

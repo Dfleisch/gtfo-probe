@@ -1,0 +1,74 @@
+gtfo-probe check: docs/examples/codex-default.rules (format: codex)
+capability DB: generated 2026-10-26T16:18:11Z by gtfo-probe 0.1.0
+tool versions probed: cat@9.7, cp@9.7, curl@8.14.1, diff@3.10, env@9.7, find@4.10.0, gawk@5.2.1, git@2.47.3, grep@3.11, gzip@1.13, head@9.7, ls@9.7, make@4.4.1, mawk@1.3.4, mv@9.7, node@20.19.2, npm@11.21.1, npx@11.21.1, pip@25.1.1, python3@3.13.5, rsync@3.5.0, scp@10.0, sed@4.9, sort@9.7, ssh@10.0, tail@9.7, tar@1.35, unzip@6.00, wget@1.25.0, xargs@4.10.0, zip@3.0
+runner tools (critical by design, they run what you give them): env@9.7, make@4.4.1, node@20.19.2, npx@11.21.1, python3@3.13.5, xargs@4.10.0
+Results reflect only the probes that were run, on the tool versions listed above.
+"no known risk" means probes saw no effect; "UNKNOWN" means nothing was tested. Neither means safe.
+Not modelled: READING files (a `cat` or `grep` entry can still read secrets).
+
+[HIGH] prefix_rule(pattern=['git', 'show'])   [git show ...]
+    high     fs_write via --output  (probe git.show.output, confirmed, git@2.47.3)
+             evidence: file created: out/probe-output.txt
+             abbreviation: abbreviation --outpu was rejected by this version (probe git.show.output-abbrev)
+    fix: pin the exact command (Codex rules are always prefixes, so use decision="prompt" for this command), or remove this entry.
+    note: Codex allow rules run the command OUTSIDE the sandbox
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] prefix_rule(pattern=['tar', '-tf'])   [tar -tf ...]
+    critical exec     via --checkpoint-action  (probe tar.checkpoint-action-exec, confirmed, tar@1.35)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via --to-command  (probe tar.to-command, confirmed, tar@1.35)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via -I  (probe tar.use-compress-program, confirmed, tar@1.35)
+             evidence: canary program ran: canary-exec ran: argv=-d
+             abbreviation: WORKS in a variant spelling, --use-compress-prog (probe tar.use-compress-program-abbrev); deny by capability, not by flag string
+    high     fs_write via --delete  (probe tar.delete, confirmed, tar@1.35)
+             evidence: file modified: data/sample.tar
+    high     fs_write via --index-file  (probe tar.index-file, confirmed, tar@1.35)
+             evidence: file created: out/probe-output.txt
+             abbreviation: WORKS in a variant spelling, --index (probe tar.index-file-abbrev); deny by capability, not by flag string
+    high     fs_write via --volno-file  (probe tar.volno-file, confirmed, tar@1.35)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via -A  (probe tar.catenate, confirmed, tar@1.35)
+             evidence: file modified: data/sample.tar
+    high     fs_write via -cf  (probe tar.create, confirmed, tar@1.35)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via -r  (probe tar.append, confirmed, tar@1.35)
+             evidence: file modified: data/sample.tar
+    high     fs_write via -u  (probe tar.update, confirmed, tar@1.35)
+             evidence: file modified: data/sample.tar
+    high     fs_write via -x  (probe tar.extract, confirmed, tar@1.35)
+             evidence: file modified: data/hello.txt
+    fix: pin the exact command (Codex rules are always prefixes, so use decision="prompt" for this command), or remove this entry.
+    note: Codex allow rules run the command OUTSIDE the sandbox
+    note: pinned words are not analysed; all probes for this tool count
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[CRITICAL] prefix_rule(pattern=['sed', '-n'])   [sed -n ...]
+    critical exec     via e  (probe sed.e-command, confirmed, sed@4.9)
+             evidence: canary program ran: canary-exec ran: argv=
+    critical exec     via s///e  (probe sed.s-e-flag, confirmed, sed@4.9)
+             evidence: canary program ran: canary-exec ran: argv=
+    high     fs_write via -i  (probe sed.in-place, confirmed, sed@4.9)
+             evidence: file modified: canary/victim.txt
+    high     fs_write via s///w  (probe sed.s-w-flag, confirmed, sed@4.9)
+             evidence: file created: out/probe-output.txt
+    high     fs_write via w  (probe sed.w-command, confirmed, sed@4.9)
+             evidence: file created: out/probe-output.txt
+    fix: pin the exact command (Codex rules are always prefixes, so use decision="prompt" for this command), or remove this entry.
+    note: Codex allow rules run the command OUTSIDE the sandbox
+    note: pinned words are not analysed; all probes for this tool count
+    note: recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook.
+
+[UNKNOWN] prefix_rule(pattern=['gh', ['pr', 'issue'], 'view'])   [gh pr view ...]
+    note: Codex allow rules run the command OUTSIDE the sandbox
+    note: tool not in the capability DB: UNKNOWN (not tested), not safe
+
+[UNKNOWN] prefix_rule(pattern=['gh', ['pr', 'issue'], 'view'])   [gh issue view ...]
+    note: Codex allow rules run the command OUTSIDE the sandbox
+    note: tool not in the capability DB: UNKNOWN (not tested), not safe
+
+[skipped] prefix_rule(pattern=['git', 'push'])
+    note: decision="forbidden" does not auto-approve; not analysed
+
+summary: 6 entries (3 findings, 1 skipped, 2 unknown_tool); findings by severity: 5 critical, 12 high

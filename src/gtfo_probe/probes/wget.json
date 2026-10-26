@@ -1,0 +1,178 @@
+{
+  "probes": [
+    {
+      "id": "wget.help.control",
+      "tool": "wget",
+      "argv": [
+        "--help"
+      ],
+      "expect": [],
+      "description": "CONTROL: print help."
+    },
+    {
+      "id": "wget.url",
+      "tool": "wget",
+      "argv": [
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "Fetching a URL is a network connection (fails here).",
+      "flag": ""
+    },
+    {
+      "id": "wget.output-document",
+      "tool": "wget",
+      "argv": [
+        "--output-document=<<out>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "fs_write",
+        "net"
+      ],
+      "description": "`-O/--output-document=FILE` writes the download to FILE (creates the file even when the download fails).",
+      "flag": "--output-document"
+    },
+    {
+      "id": "wget.output-document-abbrev",
+      "tool": "wget",
+      "argv": [
+        "--output-doc=<<out>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "fs_write",
+        "net"
+      ],
+      "description": "Unambiguous prefix works.",
+      "flag": "--output-doc"
+    },
+    {
+      "id": "wget.output-file",
+      "tool": "wget",
+      "argv": [
+        "--output-file=<<out>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-o/--output-file=FILE` writes the LOG to FILE. The network attempt still happened, but its error message went into the file, so the text-matching network detector cannot see it (see docs: detector limit).",
+      "flag": "--output-file"
+    },
+    {
+      "id": "wget.use-askpass",
+      "tool": "wget",
+      "argv": [
+        "--use-askpass=<<canary_exec>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "exec",
+        "net"
+      ],
+      "description": "`--use-askpass=CMD` runs CMD to obtain credentials when the server asks.",
+      "flag": "--use-askpass"
+    },
+    {
+      "id": "wget.use-askpass-abbrev",
+      "tool": "wget",
+      "argv": [
+        "--use-ask=<<canary_exec>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "exec",
+        "net"
+      ],
+      "description": "Unambiguous prefix works.",
+      "flag": "--use-ask"
+    },
+    {
+      "id": "wget.post-file",
+      "tool": "wget",
+      "argv": [
+        "--post-file=<<secret>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "`--post-file=FILE` uploads a local file to the server (data exfiltration; effect type is just `net`).",
+      "flag": "--post-file"
+    },
+    {
+      "id": "wget.execute",
+      "tool": "wget",
+      "argv": [
+        "--execute=robots=off",
+        "--spider",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "`--execute=COMMAND` runs a wgetrc setting command (settings only; it does not run programs).",
+      "flag": "--execute"
+    },
+    {
+      "id": "wget.execute-abbrev",
+      "tool": "wget",
+      "argv": [
+        "--ex=robots=off",
+        "--spider",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [],
+      "description": "NEGATIVE CONTROL: `--ex=` is AMBIGUOUS in wget (--exclude-directories, --exclude-domains, --execute), so wget refuses and nothing happens.",
+      "flag": "--ex"
+    },
+    {
+      "id": "wget.output-file-short",
+      "tool": "wget",
+      "argv": [
+        "-o",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-o FILE` (short --output-file) creates/truncates FILE even when wget then fails with 'missing URL': no network needed. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-o",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "wget.warc-file",
+      "tool": "wget",
+      "argv": [
+        "--warc-file=<<out>>",
+        "--tries=1",
+        "<<url>>"
+      ],
+      "expect": [
+        "fs_write",
+        "net"
+      ],
+      "description": "`--warc-file=NAME` writes NAME.warc.gz (suffix appended, so the exact path is only partly chosen) before any request succeeds. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--warc-file",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

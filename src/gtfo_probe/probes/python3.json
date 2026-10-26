@@ -1,0 +1,88 @@
+{
+  "probes": [
+    {
+      "id": "python3.print.control",
+      "tool": "python3",
+      "argv": [
+        "-c",
+        "print(1)"
+      ],
+      "expect": [],
+      "description": "CONTROL: harmless code passed with -c (the interpreter is the capability, this code is not)."
+    },
+    {
+      "id": "python3.script.control",
+      "tool": "python3",
+      "argv": [
+        "<<pyscript>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: running a harmless script file."
+    },
+    {
+      "id": "python3.code-exec",
+      "tool": "python3",
+      "argv": [
+        "-c",
+        "import subprocess; subprocess.call(['<<canary_exec>>'])"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "BY DESIGN: `-c CODE` runs any Python, including starting programs.",
+      "flag": "-c",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "python3.code-write",
+      "tool": "python3",
+      "argv": [
+        "-c",
+        "open('<<out>>','w').write('x')"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "BY DESIGN: Python code can write any file the process may write.",
+      "flag": "-c",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "python3.code-net",
+      "tool": "python3",
+      "argv": [
+        "-c",
+        "import urllib.request; urllib.request.urlopen('<<url>>', timeout=2)"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "BY DESIGN: Python code can open network connections.",
+      "flag": "-c",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "python3.module-py-compile",
+      "tool": "python3",
+      "argv": [
+        "-m",
+        "py_compile",
+        "<<pyscript>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-m MODULE` runs a standard-library module; `py_compile` writes a .pyc cache file next to the script.",
+      "flag": "-m",
+      "tags": [
+        "runner"
+      ]
+    }
+  ]
+}

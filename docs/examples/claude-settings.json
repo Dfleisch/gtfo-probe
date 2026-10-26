@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git show:*)",
+      "Bash(git ls-remote:*)",
+      "Bash(tar:*)",
+      "Bash(find . -name *)",
+      "Bash(git diff HEAD)",
+      "Bash(npm run test:*)",
+      "Bash(python3:*)",
+      "Read(./src/**)"
+    ],
+    "deny": ["Bash(git push:*)"]
+  }
+}

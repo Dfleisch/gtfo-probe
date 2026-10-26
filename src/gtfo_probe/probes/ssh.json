@@ -1,0 +1,103 @@
+{
+  "probes": [
+    {
+      "id": "ssh.config-dump.control",
+      "tool": "ssh",
+      "argv": [
+        "-G",
+        "example.invalid"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-G` prints the effective configuration and exits; it never connects.",
+      "flag": "-G"
+    },
+    {
+      "id": "ssh.proxycommand",
+      "tool": "ssh",
+      "argv": [
+        "-o",
+        "ProxyCommand=<<canary_exec>>",
+        "example.invalid"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-o ProxyCommand=CMD` runs CMD (through the shell) to reach the host.",
+      "flag": "-o ProxyCommand"
+    },
+    {
+      "id": "ssh.proxycommand-abbrev",
+      "tool": "ssh",
+      "argv": [
+        "-oproxycommand=<<canary_exec>>",
+        "example.invalid"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "SPELLING TWIN (not an abbreviation): option names are case-insensitive and `-oNAME=` may be attached, so `-oproxycommand=` also works; a deny rule matching the exact text `ProxyCommand` misses it.",
+      "flag": "-oproxycommand"
+    },
+    {
+      "id": "ssh.proxycommand-with-dump.control",
+      "tool": "ssh",
+      "argv": [
+        "-o",
+        "ProxyCommand=<<canary_exec>>",
+        "-G",
+        "example.invalid"
+      ],
+      "expect": [],
+      "description": "CONTROL: with `-G` the ProxyCommand is only printed, never run.",
+      "flag": "-G"
+    },
+    {
+      "id": "ssh.log-file",
+      "tool": "ssh",
+      "argv": [
+        "-E",
+        "<<out>>",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=2",
+        "192.0.2.1"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-E FILE` writes ssh's log to FILE. The connection attempt still happened, but its error message went into the file, so the text-matching network detector cannot see it (same blind spot as wget -o; see docs).",
+      "flag": "-E"
+    },
+    {
+      "id": "ssh.host",
+      "tool": "ssh",
+      "argv": [
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=2",
+        "192.0.2.1"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "Connecting to a host is a network connection (fails here).",
+      "flag": ""
+    },
+    {
+      "id": "ssh.jump-host",
+      "tool": "ssh",
+      "argv": [
+        "-J",
+        "example.invalid",
+        "other.invalid"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "`-J HOST` connects through a jump host first.",
+      "flag": "-J"
+    }
+  ]
+}

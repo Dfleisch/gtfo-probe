@@ -1,0 +1,275 @@
+{
+  "probes": [
+    {
+      "id": "gawk.print.control",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{print \"hi\"}"
+      ],
+      "expect": [],
+      "description": "CONTROL: a program that only prints."
+    },
+    {
+      "id": "gawk.system",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{system(\"<<canary_exec>>\")}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "The `system()` function runs a shell command.",
+      "flag": "system()"
+    },
+    {
+      "id": "gawk.pipe-out",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{print \"x\" | \"<<canary_exec>>\"}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`print | \"cmd\"` pipes output into a command (starts it).",
+      "flag": "print |"
+    },
+    {
+      "id": "gawk.getline-cmd",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{\"<<canary_exec>>\" | getline x}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`\"cmd\" | getline` runs a command and reads its output.",
+      "flag": "cmd | getline"
+    },
+    {
+      "id": "gawk.redirect-file",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{print \"x\" > \"<<out>>\"}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`print > \"file\"` creates/overwrites a file.",
+      "flag": ">"
+    },
+    {
+      "id": "gawk.coprocess",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{print \"x\" |& \"<<canary_exec>>\"}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`|&` starts a coprocess (gawk extension) - another way to run a command.",
+      "flag": "|&"
+    },
+    {
+      "id": "gawk.in-place",
+      "tool": "gawk",
+      "argv": [
+        "-i",
+        "inplace",
+        "{print \"X\"}",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-i inplace` loads the inplace extension: the input file is rewritten (like sed -i).",
+      "flag": "-i inplace"
+    },
+    {
+      "id": "gawk.in-place-abbrev",
+      "tool": "gawk",
+      "argv": [
+        "--include=inplace",
+        "{print \"X\"}",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--include=` is the long spelling of `-i`; it works the same.",
+      "flag": "--include"
+    },
+    {
+      "id": "gawk.profile",
+      "tool": "gawk",
+      "argv": [
+        "--profile=<<out>>",
+        "BEGIN{print 1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--profile=FILE` writes a profile of the program to FILE.",
+      "flag": "--profile"
+    },
+    {
+      "id": "gawk.profile-abbrev",
+      "tool": "gawk",
+      "argv": [
+        "--prof=<<out>>",
+        "BEGIN{print 1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "An unambiguous prefix of --profile is accepted (gawk uses getopt_long).",
+      "flag": "--prof"
+    },
+    {
+      "id": "gawk.dump-variables",
+      "tool": "gawk",
+      "argv": [
+        "--dump-variables=<<out>>",
+        "BEGIN{print 1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--dump-variables=FILE` writes the global variables to FILE.",
+      "flag": "--dump-variables"
+    },
+    {
+      "id": "gawk.pretty-print",
+      "tool": "gawk",
+      "argv": [
+        "--pretty-print=<<out>>",
+        "BEGIN{print 1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--pretty-print=FILE` writes the reformatted program to FILE.",
+      "flag": "--pretty-print"
+    },
+    {
+      "id": "gawk.inet-tcp",
+      "tool": "gawk",
+      "argv": [
+        "BEGIN{print \"x\" > \"/inet/tcp/0/192.0.2.1/9\"}"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "gawk's special file /inet/tcp/... opens a TCP connection (here it fails inside the sandbox, which is still an attempt).",
+      "flag": "/inet"
+    },
+    {
+      "id": "gawk.sandbox.system",
+      "tool": "gawk",
+      "argv": [
+        "--sandbox",
+        "BEGIN{system(\"<<canary_exec>>\")}"
+      ],
+      "expect": [],
+      "description": "CONTROL: `--sandbox` makes system() a fatal error.",
+      "flag": "--sandbox"
+    },
+    {
+      "id": "gawk.sandbox.pipe-out",
+      "tool": "gawk",
+      "argv": [
+        "--sandbox",
+        "BEGIN{print \"x\" | \"<<canary_exec>>\"}"
+      ],
+      "expect": [],
+      "description": "CONTROL: `--sandbox` forbids all redirections and pipes.",
+      "flag": "--sandbox"
+    },
+    {
+      "id": "gawk.sandbox.redirect-file",
+      "tool": "gawk",
+      "argv": [
+        "--sandbox",
+        "BEGIN{print \"x\" > \"<<out>>\"}"
+      ],
+      "expect": [],
+      "description": "CONTROL: `--sandbox` forbids `>` too.",
+      "flag": "--sandbox"
+    },
+    {
+      "id": "gawk.sandbox.in-place",
+      "tool": "gawk",
+      "argv": [
+        "--sandbox",
+        "-i",
+        "inplace",
+        "{print \"X\"}",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `--sandbox` refuses to load extensions such as inplace.",
+      "flag": "--sandbox"
+    },
+    {
+      "id": "gawk.sandbox.system-short",
+      "tool": "gawk",
+      "argv": [
+        "--sandb",
+        "BEGIN{system(\"<<canary_exec>>\")}"
+      ],
+      "expect": [],
+      "description": "CONTROL: the abbreviation --sandb still sandboxes (so an allowlist rule must not rely on the full spelling).",
+      "flag": "--sandb"
+    },
+    {
+      "id": "gawk.dump-variables-short",
+      "tool": "gawk",
+      "argv": [
+        "-d<<out>>",
+        "BEGIN{x=1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-dFILE` is the short form of --dump-variables: dumps globals to FILE. The file name must be attached (`-d FILE` makes FILE the program text); bare -d writes awkvars.out in the cwd. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-d",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "gawk.pretty-print-short",
+      "tool": "gawk",
+      "argv": [
+        "-o<<out>>",
+        "BEGIN{print 1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-oFILE` is the short form of --pretty-print: writes the formatted program to FILE (bare -o: awkprof.out in the cwd). Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-o",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "gawk.profile-short",
+      "tool": "gawk",
+      "argv": [
+        "-p<<out>>",
+        "BEGIN{print 1}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-pFILE` is the short form of --profile: writes a profile to FILE (bare -p: awkprof.out in the cwd). Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-p",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

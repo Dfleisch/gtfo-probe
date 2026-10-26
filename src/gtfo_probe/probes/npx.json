@@ -1,0 +1,30 @@
+{
+  "probes": [
+    {
+      "id": "npx.version.control",
+      "tool": "npx",
+      "argv": [
+        "--version"
+      ],
+      "expect": [],
+      "description": "CONTROL: print the version. Modern npx (npm 10+) writes nothing here. npm 9 also wrote a debug log under ~/.npm/_logs, which `run` reports as an unexpected fs_write."
+    },
+    {
+      "id": "npx.runner",
+      "tool": "npx",
+      "argv": [
+        "--offline",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "BY DESIGN: `npx PROGRAM` runs PROGRAM (a local path here; normally a package fetched from the registry).",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    }
+  ]
+}

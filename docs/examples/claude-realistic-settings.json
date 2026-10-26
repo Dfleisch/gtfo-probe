@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch:*)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(sed *)",
+      "Bash(sort *)",
+      "Bash(tar *)",
+      "Bash(npm run test)",
+      "Bash(npm run *)",
+      "Bash(python3 *)",
+      "Bash(curl *)",
+      "Bash(* --version)",
+      "Bash(timeout 30 make *)",
+      "Read(./src/**)",
+      "WebFetch(domain:docs.python.org)"
+    ],
+    "ask": [
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Bash(rm *)",
+      "Bash(curl * -o *)",
+      "Read(./.env)"
+    ]
+  }
+}

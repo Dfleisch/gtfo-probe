@@ -1,0 +1,208 @@
+{
+  "probes": [
+    {
+      "id": "npm.version.control",
+      "tool": "npm",
+      "argv": [
+        "--version"
+      ],
+      "expect": [],
+      "description": "CONTROL: print the version. Modern npm (npm 10+) writes nothing here. npm 9 also wrote a debug log under ~/.npm/_logs, which `run` reports as an unexpected fs_write."
+    },
+    {
+      "id": "npm.ls.baseline",
+      "tool": "npm",
+      "argv": [
+        "ls",
+        "--prefix=<<npmpkg>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "BASELINE: even a plain `npm ls` creates ~/.npm/_logs (a debug log), on npm 9 and npm 11 alike; npm is never strictly read-only.",
+      "flag": "",
+      "tags": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "npm.run",
+      "tool": "npm",
+      "argv": [
+        "run",
+        "canary",
+        "--prefix=<<npmpkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "BY DESIGN: `npm run NAME` executes the script NAME from package.json.",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.run-script",
+      "tool": "npm",
+      "argv": [
+        "run-script",
+        "canary",
+        "--prefix=<<npmpkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`run-script` is an alias of `run`; a rule written for `npm run` does not match this spelling.",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.run.ignore-scripts",
+      "tool": "npm",
+      "argv": [
+        "run",
+        "canary",
+        "--prefix=<<npmpkg>>",
+        "--ignore-scripts"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "SURPRISE: `--ignore-scripts` does NOT stop `npm run` (it only disables lifecycle scripts of install/rebuild).",
+      "flag": "--ignore-scripts",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.exec",
+      "tool": "npm",
+      "argv": [
+        "exec",
+        "--offline",
+        "--",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "BY DESIGN: `npm exec -- PROGRAM` runs PROGRAM (like npx).",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.exec.c-flag",
+      "tool": "npm",
+      "argv": [
+        "exec",
+        "--offline",
+        "-c",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`-c STRING` runs STRING as a shell command line.",
+      "flag": "-c",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.x",
+      "tool": "npm",
+      "argv": [
+        "x",
+        "--offline",
+        "--",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`npm x` is an alias of `npm exec`; again a different spelling for rule writers to miss.",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.install",
+      "tool": "npm",
+      "argv": [
+        "install",
+        "--offline",
+        "--prefix=<<npmpkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`npm install` runs the project's lifecycle scripts (preinstall/install/postinstall/prepare).",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.install.ignore-scripts",
+      "tool": "npm",
+      "argv": [
+        "install",
+        "--offline",
+        "--ignore-scripts",
+        "--prefix=<<npmpkg>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "CONTROL for exec: `--ignore-scripts` stops install from running lifecycle scripts (only npm's own log is written).",
+      "flag": "--ignore-scripts"
+    },
+    {
+      "id": "npm.rebuild",
+      "tool": "npm",
+      "argv": [
+        "rebuild",
+        "--prefix=<<npmpkg>>"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`npm rebuild` re-runs the install scripts.",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "npm.view",
+      "tool": "npm",
+      "argv": [
+        "view",
+        "left-pad",
+        "version",
+        "--fetch-retries=0",
+        "--fetch-timeout=2000"
+      ],
+      "expect": [
+        "fs_write",
+        "net"
+      ],
+      "description": "`npm view` contacts the registry (fails here: no network).",
+      "flag": ""
+    }
+  ]
+}

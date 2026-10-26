@@ -1,0 +1,477 @@
+== cat  (cat@9.7) ==
+  help: cat --help                   used (1177 chars)
+  help: cat -h                       ignored: tool rejected it
+  help: cat help                     ignored: does not look like a help page
+  parsed 12 options from help; tested 3; not tested (no hint) 7; over the cap 0
+  ran, no effect observed: 3
+      -b, --number-nonblank; -n, --number; -s, --squeeze-blank
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 3 no effect/rejected/timeout  [0.22s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== cp  (cp@9.7) ==
+  help: cp --help                    used (5791 chars)
+  help: cp -h                        ignored: tool rejected it
+  help: cp help                      ignored: does not look like a help page
+  parsed 37 options from help; tested 11; not tested (no hint) 24; over the cap 0
+  ran, no effect observed: 11
+      -f, --force; --remove-destination; -t; --backup; -b; -i, --interactive; -H; --update; --strip-trailing-slashes; -S, --suffix; -u
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 11 no effect/rejected/timeout  [0.73s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== curl  (curl@8.14.1) ==
+  help: curl --help                  used (1138 chars)
+  help: curl -h                      used (1138 chars)
+  help: curl help                    ignored: does not look like a help page
+  parsed 12 options from help; tested 8; not tested (no hint) 2; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    -O, --remote-name
+        fs_write=confirmed; reproduced=True; known: curl.remote-name
+        argv: curl --remote-name file://<<hello>>
+    -o, --output
+        fs_write=confirmed; reproduced=True; known: curl.output
+        argv: curl --output <<out>> file://<<hello>>
+  NOT confirmed (text clue only, or did not reproduce):
+    -T, --upload-file
+        net=attempted; reproduced=True; NEW
+        argv: curl --upload-file <<url>> file://<<hello>>
+  ran, no effect observed: 5
+      -f, --fail; -d, --data; -i, --show-headers; -u, --user; -A, --user-agent
+  summary: 2 confirmed (2 already covered by hand probes, 0 new), 1 unconfirmed, 5 no effect/rejected/timeout  [0.84s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== diff  (diff@3.10) ==
+  help: diff --help                  used (5387 chars)
+  help: diff -h                      ignored: does not look like a help page
+  help: diff help                    ignored: does not look like a help page
+  parsed 50 options from help; tested 19; not tested (no hint) 29; over the cap 0
+  ran, no effect observed: 19
+      -e, --ed; --normal; -c, -C, --context; -u, -U, --unified; -n, --rcs; -y, --side-by-side; -W, --width; --left-column; --suppress-common-lines; -t, --expand-tabs; --tabsize; --suppress-blank-empty ... (+7 more; --show-all)
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 19 no effect/rejected/timeout  [1.03s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== env  (env@9.7) ==
+  help: env --help                   used (1823 chars)
+  help: env -h                       ignored: tool rejected it
+  help: env help                     ignored: does not look like a help page
+  parsed 13 options from help; tested 6; not tested (no hint) 5; over the cap 0
+  ran, no effect observed: 6
+      -a, --argv0; --null; -u, --unset; -C, --chdir; --block-signal; -v, --debug
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 6 no effect/rejected/timeout  [0.44s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== find  (find@4.10.0) ==
+  help: find --help                  used (2109 chars)
+  help: find -h                      ignored: tool rejected it
+  help: find help                    ignored: does not look like a help page
+  parsed 81 options from help; tested 17; not tested (no hint) 62; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    -delete
+        fs_write=confirmed; reproduced=True; known: find.delete
+        argv: find <<victim>> -delete
+    -fprint0
+        fs_write=confirmed; reproduced=True; NEW
+        argv: find <<victim>> -fprint0 <<out>>
+    -fprint
+        fs_write=confirmed; reproduced=True; known: find.fprint
+        argv: find <<victim>> -fprint <<out>>
+    -fls
+        fs_write=confirmed; reproduced=True; known: find.fls
+        argv: find <<victim>> -fls <<out>>
+    -exec
+        exec=confirmed; reproduced=True; known: find.exec
+        argv: find <<victim>> -exec <<canary_exec>> ;
+    -execdir
+        exec=confirmed; reproduced=True; known: find.execdir
+        argv: find <<victim>> -execdir <<canary_exec>> ;
+  ran, no effect observed: 11
+      -print; -files0-from; -anewer; -cnewer; -newer; -executable; -print0; -printf; -fprintf; -ok; -okdir
+  summary: 6 confirmed (5 already covered by hand probes, 1 new), 0 unconfirmed, 11 no effect/rejected/timeout  [0.6s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== gawk  (gawk@5.2.1) ==
+  help: gawk --help                  used (1510 chars)
+  help: gawk -h                      used (1510 chars)
+  help: gawk help                    ignored: does not look like a help page
+  parsed 28 options from help; tested 6; not tested (no hint) 22; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    -d
+        fs_write=confirmed; reproduced=True; NEW
+        argv: gawk -d <<canary_exec>>
+    -o
+        fs_write=confirmed; reproduced=True; NEW
+        argv: gawk -o <<hello>>
+    -p
+        fs_write=confirmed; reproduced=True; NEW
+        argv: gawk -p <<hello>>
+  ran, no effect observed: 3
+      -E; -D; -e
+  summary: 3 confirmed (0 already covered by hand probes, 3 new), 0 unconfirmed, 3 no effect/rejected/timeout  [0.48s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== git  (git@2.47.3) ==
+  help: git diff -h                  used (1586 chars)
+  help: git diff --help              ignored: does not look like a help page
+  help: git grep -h                  used (3609 chars)
+  help: git grep --help              ignored: does not look like a help page
+  help: git log -h                   used (718 chars)
+  help: git log --help               ignored: does not look like a help page
+  help: git ls-remote -h             used (867 chars)
+  help: git ls-remote --help         ignored: does not look like a help page
+  help: git show -h                  used (718 chars)
+  help: git show --help              ignored: does not look like a help page
+  help: git status -h                used (1204 chars)
+  help: git status --help            ignored: does not look like a help page
+  parsed 116 options from help; tested 17; not tested (no hint) 99; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --upload-pack (sub: ls-remote)
+        exec=confirmed; reproduced=True; known: git.ls-remote.upload-pack
+        argv: git --no-optional-locks ls-remote --upload-pack=<<canary_exec>> <<repo>>
+    -O, --open-files-in-pager (sub: grep)
+        exec=confirmed; reproduced=True; known: git.grep.open-files-in-pager
+        argv: git --no-optional-locks grep --open-files-in-pager=<<canary_exec>> hello
+  ran, no effect observed: 15
+      -z; -p; --patch-with-raw; --patch-with-stat; -z, --null; --break; -f; -q, --quiet; -q, --quiet; -L; --get-url; -o, --server-option ... (+3 more; --show-all)
+  summary: 2 confirmed (2 already covered by hand probes, 0 new), 0 unconfirmed, 15 no effect/rejected/timeout  [0.73s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== grep  (grep@3.11) ==
+  help: grep --help                  used (4041 chars)
+  help: grep -h                      used (82 chars)
+  help: grep help                    ignored: does not look like a help page
+  parsed 49 options from help; tested 17; not tested (no hint) 30; over the cap 0
+  ran, no effect observed: 17
+      -f, --file; -b, --byte-offset; -n, --line-number; --line-buffered; -H, --with-filename; -h, --no-filename; -q, --quiet, --silent; --exclude-from; -L, --files-without-match; -l, --files-with-matches; -c, --count; -Z, --null ... (+5 more; --show-all)
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 17 no effect/rejected/timeout  [0.86s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== gzip  (gzip@1.13) ==
+  help: gzip --help                  used (1245 chars)
+  help: gzip -h                      used (1245 chars)
+  help: gzip help                    ignored: does not look like a help page
+  parsed 19 options from help; tested 10; not tested (no hint) 7; over the cap 0
+  ran, no effect observed: 10
+      -f, --force; -c, --stdout; -k, --keep; -l, --list; -n, --no-name; -N, --name; -S, --suffix; -t, --test; --fast; --best
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 10 no effect/rejected/timeout  [0.48s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== head  (head@9.7) ==
+  help: head --help                  used (1470 chars)
+  help: head -h                      ignored: tool rejected it
+  help: head help                    ignored: does not look like a help page
+  parsed 7 options from help; tested 4; not tested (no hint) 1; over the cap 0
+  ran, no effect observed: 4
+      -c, --bytes; -n, --lines; -q, --quiet, --silent; -v, --verbose
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 4 no effect/rejected/timeout  [0.22s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== ls  (ls@9.7) ==
+  help: ls --help                    used (7750 chars)
+  help: ls -h                        ignored: does not look like a help page
+  help: ls help                      ignored: does not look like a help page
+  parsed 60 options from help; tested 23; not tested (no hint) 35; over the cap 0
+  ran, no effect observed: 23
+      --show-control-chars; --author; -b, --escape; --block-size; -B, --ignore-backups; --color; -D, --dired; -F, --classify; --file-type; -G, --no-group; -h, --human-readable; -H, --dereference-command-line ... (+11 more; --show-all)
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 23 no effect/rejected/timeout  [1.14s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== make  (make@4.4.1) ==
+  help: make --help                  used (2896 chars)
+  help: make -h                      used (2896 chars)
+  help: make help                    ignored: does not look like a help page
+  parsed 36 options from help; tested 15; not tested (no hint) 19; over the cap 0
+  ran, no effect observed: 15
+      -n, --just-print, --dry-run, --recon; -C, --directory; -d; --debug; -E, --eval; -f, --file, --makefile; -I, --include-dir; -o, --old-file, --assume-old; -O, --output-sync; -p, --print-data-base; -q, --question; --trace ... (+3 more; --show-all)
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 15 no effect/rejected/timeout  [0.96s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== mawk  (mawk@1.3.4) ==
+  help: mawk --help                  used (1186 chars)
+  help: mawk -h                      ignored: does not look like a help page
+  help: mawk help                    ignored: does not look like a help page
+  parsed 4 options from help; tested 1; not tested (no hint) 3; over the cap 0
+  ran, no effect observed: 1
+      -v
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 1 no effect/rejected/timeout  [0.12s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== mv  (mv@9.7) ==
+  help: mv --help                    used (3024 chars)
+  help: mv -h                        ignored: tool rejected it
+  help: mv help                      ignored: does not look like a help page
+  parsed 18 options from help; tested 9; not tested (no hint) 7; over the cap 0
+  ran, no effect observed: 9
+      -t; --backup; -b; -i, --interactive; -n, --no-clobber; --strip-trailing-slashes; -S, --suffix; --update; -u
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 9 no effect/rejected/timeout  [0.56s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== node  (node@20.19.2) ==
+  help: node --help                  used (21532 chars)
+  help: node -h                      used (21532 chars)
+  help: node help                    ignored: does not look like a help page
+  parsed 148 options from help; tested 54; not tested (no hint) 92; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --cpu-prof
+        fs_write=confirmed; reproduced=True; known: node.cpu-prof
+        argv: node --cpu-prof <<hello>>
+    --heap-prof
+        fs_write=confirmed; reproduced=True; NEW
+        argv: node --heap-prof <<hello>>
+    --trace-event-categories
+        fs_write=confirmed; reproduced=True; NEW
+        argv: node --trace-event-categories=<<out>> <<hello>>
+  ran, no effect observed: 51
+      --completion-bash; --inspect-brk; -p, --print; --unhandled-rejections; --use-openssl-ca; --v8-options; --allow-fs-write; -c, --check; --diagnostic-dir; --disallow-code-generation-from-strings; -e, --eval; --experimental-import-meta-resolve ... (+39 more; --show-all)
+  summary: 3 confirmed (1 already covered by hand probes, 2 new), 0 unconfirmed, 51 no effect/rejected/timeout  [33.65s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== npm  (npm@9.2.0) ==
+  help: npm --help                   used (1209 chars)
+  help: npm -h                       used (1209 chars)
+  help: npm help                     used (1209 chars)
+  parsed 3 options from help; tested 0; not tested (no hint) 3; over the cap 0
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 0 no effect/rejected/timeout  [1.49s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== npx  (npx@9.2.0) ==
+  help: npx --help                   used (476 chars)
+  help: npx -h                       used (476 chars)
+  help: npx help                     ignored: timed out
+  parsed 5 options from help; tested 0; not tested (no hint) 5; over the cap 0
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 0 no effect/rejected/timeout  [4.13s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== pip  (pip@25.1.1) ==
+  help: pip --help                   used (4605 chars)
+  help: pip -h                       used (4605 chars)
+  help: pip help                     used (4605 chars)
+  parsed 26 options from help; tested 17; not tested (no hint) 7; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --python
+        exec=confirmed; reproduced=True; NEW
+        argv: pip --python=<<canary_exec>> <<hello>>
+  NOT confirmed (text clue only, or did not reproduce):
+    --retries
+        net=attempted; reproduced=True; known: pip.index-url
+        argv: pip --retries=<<url>> <<hello>>
+    --resume-retries
+        net=attempted; reproduced=True; NEW
+        argv: pip --resume-retries=<<url>> <<hello>>
+  ran, no effect observed: 14
+      --proxy; --debug; --isolated; --require-virtualenv; -v, --verbose; -q, --quiet; --log; --trusted-host; --cert; --client-cert; --cache-dir; --disable-pip-version-check ... (+2 more; --show-all)
+  summary: 1 confirmed (0 already covered by hand probes, 1 new), 2 unconfirmed, 14 no effect/rejected/timeout  [10.85s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== python3  (python3@3.13.5) ==
+  help: python3 --help               used (2547 chars)
+  help: python3 -h                   used (2547 chars)
+  help: python3 help                 ignored: does not look like a help page
+  parsed 26 options from help; tested 7; not tested (no hint) 19; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    -i
+        fs_write=confirmed; reproduced=True; NEW
+        argv: python3 -i <<hello>>
+  ran, no effect observed: 6
+      -B; -d; -h; -O; -q; -V
+  summary: 1 confirmed (0 already covered by hand probes, 1 new), 0 unconfirmed, 6 no effect/rejected/timeout  [0.73s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== rsync  (rsync@3.5.0) ==
+  help: rsync --help                 used (11370 chars)
+  help: rsync -h                     used (11370 chars)
+  help: rsync help                   ignored: does not look like a help page
+  parsed 154 options from help; tested 59; not tested (no hint) 93; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --log-file
+        fs_write=confirmed; reproduced=True; known: rsync.log-file
+        argv: rsync --log-file=<<out>> <<hello>>
+    --write-batch
+        fs_write=confirmed; reproduced=True; known: rsync.write-batch
+        argv: rsync --write-batch=<<out>> <<hello>>
+    --only-write-batch
+        fs_write=confirmed; reproduced=True; NEW
+        argv: rsync --only-write-batch=<<out>> <<hello>>
+  NOT confirmed (text clue only, or did not reproduce):
+    --contimeout
+        net=attempted; reproduced=True; NEW
+        argv: rsync --contimeout=<<url>> <<hello>>
+    --remote-option, -M
+        net=attempted; reproduced=True; NEW
+        argv: rsync --remote-option=<<url>> <<hello>>
+  ran, no effect observed: 54
+      --rsh, -e; --rsync-path; --blocking-io; --early-input; --stderr; --backup, -b; --backup-dir; --suffix; --update, -u; --inplace; --append; --append-verify ... (+42 more; --show-all)
+  summary: 3 confirmed (2 already covered by hand probes, 1 new), 2 unconfirmed, 54 no effect/rejected/timeout  [7.55s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== scp  (scp@10.0) ==
+  help: scp --help                   ignored: tool rejected it
+  help: scp -h                       ignored: tool rejected it
+  help: scp help                     used (221 chars)
+  parsed 10 options from help; tested 0; not tested (no hint) 10; over the cap 0
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 0 no effect/rejected/timeout  [0.07s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== sed  (sed@4.9) ==
+  help: sed --help                   used (1837 chars)
+  help: sed -h                       ignored: tool rejected it
+  help: sed help                     ignored: does not look like a help page
+  parsed 15 options from help; tested 11; not tested (no hint) 4; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    w [seed]
+        fs_write=confirmed; reproduced=True; known: sed.w-command
+        argv: sed -n w <<out>> <<hello>>
+    e [seed]
+        exec=confirmed; reproduced=True; known: sed.e-command
+        argv: sed 1e <<canary_exec>> <<hello>>
+    -i, --in-place
+        fs_write=confirmed; reproduced=True; known: sed.in-place
+        argv: sed --in-place p <<hello>>
+  ran, no effect observed: 8
+      -f, --file; -n, --quiet, --silent; --debug; -e, --expression; -l, --line-length; -E, -r, --regexp-extended; --sandbox; -u, --unbuffered
+  summary: 3 confirmed (3 already covered by hand probes, 0 new), 0 unconfirmed, 8 no effect/rejected/timeout  [0.34s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== sort  (sort@9.7) ==
+  help: sort --help                  used (4233 chars)
+  help: sort -h                      ignored: does not look like a help page
+  help: sort help                    ignored: does not look like a help page
+  parsed 30 options from help; tested 7; not tested (no hint) 21; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --compress-program
+        exec=confirmed; reproduced=True; known: sort.compress-program
+        argv: sort --compress-program=<<canary_exec>> -m --batch-size=2 <<unsorted>> <<hello>> <<victim>>
+    -o, --output
+        fs_write=confirmed; reproduced=True; known: sort.output
+        argv: sort --output=<<out>> <<unsorted>>
+  ran, no effect observed: 5
+      -i, --ignore-nonprinting; --random-source; -T, --temporary-directory; --parallel; -u, --unique
+  summary: 2 confirmed (2 already covered by hand probes, 0 new), 0 unconfirmed, 5 no effect/rejected/timeout  [0.41s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== ssh  (ssh@10.0) ==
+  help: ssh --help                   ignored: tool rejected it
+  help: ssh -h                       ignored: tool rejected it
+  help: ssh help                     ignored: does not look like a help page
+  parsed 0 options from help; tested 0; not tested (no hint) 0; over the cap 0
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 0 no effect/rejected/timeout  [0.06s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== tail  (tail@9.7) ==
+  help: tail --help                  used (2926 chars)
+  help: tail -h                      ignored: tool rejected it
+  help: tail help                    ignored: does not look like a help page
+  parsed 13 options from help; tested 7; not tested (no hint) 4; over the cap 0
+  ran, no effect observed: 7
+      -c, --bytes; -f, --follow; -n, --lines; --max-unchanged-stats; -q, --quiet, --silent; --retry; -v, --verbose
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 7 no effect/rejected/timeout  [6.38s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== tar  (tar@1.35) ==
+  help: tar --help                   used (16662 chars)
+  help: tar -h                       ignored: does not look like a help page
+  help: tar help                     ignored: tool rejected it
+  parsed 161 options from help; tested 73; not tested (no hint) 86; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    --checkpoint-action [seed]
+        exec=confirmed; reproduced=True; known: tar.checkpoint-action-exec
+        argv: tar -tf <<archive>> --checkpoint=1 --checkpoint-action=exec=<<canary_exec>>
+    --to-command
+        exec=confirmed; reproduced=True; known: tar.to-command
+        argv: tar --to-command=<<canary_exec>> -xf <<archive>>
+    -A, --catenate, --concatenate
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --catenate -f <<archive>> hello.txt
+    -c, --create
+        fs_write=confirmed; reproduced=True; known: tar.create
+        argv: tar --create -f <<archive>> hello.txt
+    --delete
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --delete -f <<archive>> hello.txt
+    -r, --append
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --append -f <<archive>> hello.txt
+    -u, --update
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --update -f <<archive>> hello.txt
+    -x, --extract, --get
+        fs_write=confirmed; reproduced=True; known: tar.extract
+        argv: tar --extract -f <<archive>> hello.txt
+    --volno-file
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --volno-file=<<out>> -tf <<archive>>
+    -I, --use-compress-program
+        exec=confirmed; reproduced=True; known: tar.use-compress-program
+        argv: tar --use-compress-program=<<canary_exec>> -tf <<archive>>
+    --index-file
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --index-file=<<out>> -tf <<archive>>
+  ran, no effect observed: 62
+      --rsh-command; -g, --listed-incremental; -G, --incremental; --level; --occurrence; --add-file; -C, --directory; --exclude-backups; --exclude-ignore; --exclude-ignore-recursive; --exclude-tag; --exclude-tag-all ... (+50 more; --show-all)
+  summary: 11 confirmed (5 already covered by hand probes, 6 new), 0 unconfirmed, 62 no effect/rejected/timeout  [5.18s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== unzip  (unzip@6.00) ==
+  help: unzip --help                 used (1509 chars)
+  help: unzip -h                     used (1509 chars)
+  help: unzip help                   ignored: does not look like a help page
+  parsed 17 options from help; tested 6; not tested (no hint) 11; over the cap 0
+  ran, no effect observed: 6
+      -f; -p; -u; -n; -o; -K
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 6 no effect/rejected/timeout  [0.28s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== wget  (wget@1.25.0) ==
+  help: wget --help                  used (13330 chars)
+  help: wget -h                      used (13330 chars)
+  help: wget help                    ignored: does not look like a help page
+  parsed 150 options from help; tested 93; not tested (no hint) 57; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    -o
+        fs_write=confirmed; reproduced=True; NEW
+        argv: wget -o <<hello>>
+    --warc-file
+        fs_write=confirmed; reproduced=True; NEW
+        argv: wget --warc-file=<<out>> <<hello>>
+  NOT confirmed (text clue only, or did not reproduce):
+    -i
+        net=attempted; reproduced=True; NEW
+        argv: wget -i <<hello>>
+    --start-pos
+        net=attempted; reproduced=True; NEW
+        argv: wget --start-pos=<<url>> <<hello>>
+    --connect-timeout
+        net=attempted; reproduced=True; NEW
+        argv: wget --connect-timeout=<<url>> <<hello>>
+    --waitretry
+        net=attempted; reproduced=True; NEW
+        argv: wget --waitretry=<<url>> <<hello>>
+    --limit-rate
+        net=attempted; reproduced=True; NEW
+        argv: wget --limit-rate=<<url>> <<hello>>
+    --prefer-family
+        net=attempted; reproduced=True; NEW
+        argv: wget --prefer-family=<<url>> <<hello>>
+  ran, no effect observed: 85
+      --rejected-log; -S; --no-proxy; -nH, --no-host-directories; --proxy-user; --proxy-password; --save-headers; --content-on-error; --ftps-resume-ssl; --delete-after; -h; -e ... (+73 more; --show-all)
+  summary: 2 confirmed (0 already covered by hand probes, 2 new), 6 unconfirmed, 85 no effect/rejected/timeout  [4.52s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== xargs  (xargs@4.10.0) ==
+  help: xargs --help                 used (3120 chars)
+  help: xargs -h                     ignored: tool rejected it
+  help: xargs help                   ignored: does not look like a help page
+  parsed 21 options from help; tested 13; not tested (no hint) 6; over the cap 0
+  ran, no effect observed: 13
+      -t, --verbose; --null; -a, --arg-file; -d, --delimiter; -E; -L, --max-lines; -n, --max-args; -o, --open-tty; -P, --max-procs; -p, --interactive; -r, --no-run-if-empty; -s, --max-chars ... (+1 more; --show-all)
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 13 no effect/rejected/timeout  [0.7s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+
+== zip  (zip@3.0) ==
+  help: zip --help                   used (1418 chars)
+  help: zip -h                       used (1418 chars)
+  help: zip help                     ignored: does not look like a help page
+  parsed 18 options from help; tested 7; not tested (no hint) 11; over the cap 0
+  ran, no effect observed: 7
+      -f; -d; -r; -q; -A; -y; -e
+  summary: 0 confirmed (0 already covered by hand probes, 0 new), 0 unconfirmed, 7 no effect/rejected/timeout  [0.29s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+

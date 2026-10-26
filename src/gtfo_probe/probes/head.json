@@ -1,0 +1,28 @@
+{
+  "probes": [
+    {
+      "id": "head.lines.control",
+      "tool": "head",
+      "argv": [
+        "-n",
+        "1",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: first lines of a file.",
+      "flag": "-n"
+    },
+    {
+      "id": "head.bytes.control",
+      "tool": "head",
+      "argv": [
+        "-c",
+        "5",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: first bytes of a file.",
+      "flag": "-c"
+    }
+  ]
+}

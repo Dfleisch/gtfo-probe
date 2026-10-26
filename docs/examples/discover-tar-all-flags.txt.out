@@ -1,0 +1,47 @@
+== tar  (tar@1.35) ==
+  help: tar --help                   used (16662 chars)
+  help: tar -h                       ignored: does not look like a help page
+  help: tar help                     ignored: tool rejected it
+  parsed 161 options from help; tested 101; not tested (no hint) 0; over the cap 58
+  CONFIRMED effects (detector saw them, twice):
+    --checkpoint-action [seed]
+        exec=confirmed; reproduced=True; known: tar.checkpoint-action-exec
+        argv: tar -tf <<archive>> --checkpoint=1 --checkpoint-action=exec=<<canary_exec>>
+    --to-command
+        exec=confirmed; reproduced=True; known: tar.to-command
+        argv: tar --to-command=<<canary_exec>> -xf <<archive>>
+    -A, --catenate, --concatenate
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --catenate -f <<archive>> hello.txt
+    -c, --create
+        fs_write=confirmed; reproduced=True; known: tar.create
+        argv: tar --create -f <<archive>> hello.txt
+    --delete
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --delete -f <<archive>> hello.txt
+    -r, --append
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --append -f <<archive>> hello.txt
+    -u, --update
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --update -f <<archive>> hello.txt
+    -x, --extract, --get
+        fs_write=confirmed; reproduced=True; known: tar.extract
+        argv: tar --extract -f <<archive>> hello.txt
+    --volno-file
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --volno-file=<<out>> -tf <<archive>>
+    -I, --use-compress-program
+        exec=confirmed; reproduced=True; known: tar.use-compress-program
+        argv: tar --use-compress-program=<<canary_exec>> -tf <<archive>>
+    --index-file
+        fs_write=confirmed; reproduced=True; NEW
+        argv: tar --index-file=<<out>> -tf <<archive>>
+    -cf
+        fs_write=confirmed; reproduced=True; known: tar.create
+        argv: tar -cf -tf <<archive>>
+  ran, no effect observed: 89
+      --rsh-command; -g, --listed-incremental; -G, --incremental; --level; --occurrence; --add-file; -C, --directory; --exclude-backups; --exclude-ignore; --exclude-ignore-recursive; --exclude-tag; --exclude-tag-all; --exclude-tag-under; -X, --exclude-from; --keep-directory-symlink; -k, --keep-old-files; --no-overwrite-dir; --one-top-level; --overwrite; --overwrite-dir; --recursive-unlink; --remove-files; --skip-old-files; -U, --unlink-first; --ignore-command-error; --no-ignore-command-error; -O, --to-stdout; --atime-preserve; --delay-directory-restore; --group-map; -m, --touch; --no-same-owner; --no-same-permissions; --owner-map; -p, --preserve-permissions, --same-permissions; --same-owner; -f, --file; -F, --info-script, --new-volume-script; --rmt-command; -b, --blocking-factor; -B, --read-full-records; --record-size; -H, --format; -V, --label; -a, --auto-compress; --no-auto-compress; -Z, --compress, --uncompress; --backup; --hard-dereference; -h, --dereference; -N, --newer, --after-date; --suffix; --strip-components; --checkpoint; --checkpoint-action; --full-time; -l, --check-links; --show-omitted-dirs; --show-transformed-names, --show-stored-names; --totals; --utc; -o; -tvf; -xf; -d, --diff, --compare; --test-label; -t, --list; --check-device; --hole-detection; --ignore-failed-read; --no-check-device; --no-seek; -n, --seek; -T; --sparse-version; --sparse; --exclude; --exclude-caches; --exclude-caches-all; --exclude-caches-under; --exclude-vcs; --exclude-vcs-ignores; --no-null; --no-recursion; --no-unquote; --no-verbatim-files-from; --null; --verbatim-files-from; --recursion
+  summary: 12 confirmed (6 already covered by hand probes, 6 new), 0 unconfirmed, 89 no effect/rejected/timeout  [7.07s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+

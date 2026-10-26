@@ -1,0 +1,24 @@
+{
+  "probes": [
+    {
+      "id": "cat.plain.control",
+      "tool": "cat",
+      "argv": [
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: print a file. NOTE: reading files is not an effect gtfo-probe models, so `cat <<secret>>` is also 'no effect' here."
+    },
+    {
+      "id": "cat.number.control",
+      "tool": "cat",
+      "argv": [
+        "-n",
+        "<<secret>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: reads the canary secret and shows it (an information leak that the effect list does not cover).",
+      "flag": "-n"
+    }
+  ]
+}

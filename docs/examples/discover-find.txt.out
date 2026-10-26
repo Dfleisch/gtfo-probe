@@ -1,0 +1,29 @@
+== find  (find@4.10.0) ==
+  help: find --help                  used (2109 chars)
+  help: find -h                      ignored: tool rejected it
+  help: find help                    ignored: does not look like a help page
+  parsed 81 options from help; tested 17; not tested (no hint) 62; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    -delete
+        fs_write=confirmed; reproduced=True; known: find.delete
+        argv: find <<victim>> -delete
+    -fprint0
+        fs_write=confirmed; reproduced=True; NEW
+        argv: find <<victim>> -fprint0 <<out>>
+    -fprint
+        fs_write=confirmed; reproduced=True; known: find.fprint
+        argv: find <<victim>> -fprint <<out>>
+    -fls
+        fs_write=confirmed; reproduced=True; known: find.fls
+        argv: find <<victim>> -fls <<out>>
+    -exec
+        exec=confirmed; reproduced=True; known: find.exec
+        argv: find <<victim>> -exec <<canary_exec>> ;
+    -execdir
+        exec=confirmed; reproduced=True; known: find.execdir
+        argv: find <<victim>> -execdir <<canary_exec>> ;
+  ran, no effect observed: 11
+      -print; -files0-from; -anewer; -cnewer; -newer; -executable; -print0; -printf; -fprintf; -ok; -okdir
+  summary: 6 confirmed (5 already covered by hand probes, 1 new), 0 unconfirmed, 11 no effect/rejected/timeout  [0.56s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+

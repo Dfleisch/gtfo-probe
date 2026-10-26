@@ -1,0 +1,51 @@
+{
+  "probes": [
+    {
+      "id": "curl.version.control",
+      "tool": "curl",
+      "argv": [
+        "--version"
+      ],
+      "expect": [],
+      "description": "CONTROL: no effects."
+    },
+    {
+      "id": "curl.output",
+      "tool": "curl",
+      "argv": [
+        "-o",
+        "<<out>>",
+        "file://<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-o FILE` writes the response body to FILE.",
+      "flag": "-o"
+    },
+    {
+      "id": "curl.remote-name",
+      "tool": "curl",
+      "argv": [
+        "-O",
+        "file://<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-O` saves into the current directory under the remote file name.",
+      "flag": "-O"
+    },
+    {
+      "id": "curl.url",
+      "tool": "curl",
+      "argv": [
+        "<<url>>"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "Any URL argument makes curl a network client (tool-level capability)."
+    }
+  ]
+}

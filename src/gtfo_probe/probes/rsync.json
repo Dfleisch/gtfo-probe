@@ -1,0 +1,178 @@
+{
+  "probes": [
+    {
+      "id": "rsync.list-only.control",
+      "tool": "rsync",
+      "argv": [
+        "--list-only",
+        "<<data>>/"
+      ],
+      "expect": [],
+      "description": "CONTROL: `--list-only` lists files and copies nothing.",
+      "flag": "--list-only"
+    },
+    {
+      "id": "rsync.dry-run.control",
+      "tool": "rsync",
+      "argv": [
+        "-n",
+        "<<hello>>",
+        "<<outdir>>/"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-n` shows what would be copied, writes nothing.",
+      "flag": "-n"
+    },
+    {
+      "id": "rsync.rsh",
+      "tool": "rsync",
+      "argv": [
+        "--rsh=<<canary_exec>>",
+        "example.invalid:/x",
+        "<<outdir>>/"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--rsh=CMD` is the remote shell program rsync starts to reach host:path.",
+      "flag": "--rsh"
+    },
+    {
+      "id": "rsync.rsh-abbrev",
+      "tool": "rsync",
+      "argv": [
+        "--rs=<<canary_exec>>",
+        "example.invalid:/x",
+        "<<outdir>>/"
+      ],
+      "expect": [],
+      "description": "NEGATIVE CONTROL: rsync (popt) does NOT accept abbreviated long options: `unknown option`.",
+      "flag": "--rs"
+    },
+    {
+      "id": "rsync.rsh-short",
+      "tool": "rsync",
+      "argv": [
+        "-e",
+        "<<canary_exec>>",
+        "example.invalid:/x",
+        "<<outdir>>/"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-e CMD` is the short spelling.",
+      "flag": "-e"
+    },
+    {
+      "id": "rsync.copy",
+      "tool": "rsync",
+      "argv": [
+        "<<hello>>",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "rsync with local paths copies files.",
+      "flag": ""
+    },
+    {
+      "id": "rsync.delete",
+      "tool": "rsync",
+      "argv": [
+        "--delete",
+        "-r",
+        "<<outdir>>/",
+        "<<data>>/"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--delete` removes destination files that are absent from the source (here it emptied data/).",
+      "flag": "--delete"
+    },
+    {
+      "id": "rsync.remove-source-files",
+      "tool": "rsync",
+      "argv": [
+        "--remove-source-files",
+        "<<victim>>",
+        "<<outdir>>/"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--remove-source-files` deletes sources after copying.",
+      "flag": "--remove-source-files"
+    },
+    {
+      "id": "rsync.log-file",
+      "tool": "rsync",
+      "argv": [
+        "--log-file=<<out>>",
+        "-n",
+        "<<hello>>",
+        "<<outdir>>/"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--log-file=FILE` writes a log even in dry-run mode.",
+      "flag": "--log-file"
+    },
+    {
+      "id": "rsync.write-batch",
+      "tool": "rsync",
+      "argv": [
+        "--write-batch=<<out>>",
+        "<<hello>>",
+        "<<outdir>>/"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--write-batch=FILE` writes a batch file (plus a .sh script) and copies.",
+      "flag": "--write-batch"
+    },
+    {
+      "id": "rsync.daemon-url",
+      "tool": "rsync",
+      "argv": [
+        "rsync://192.0.2.1/x"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "An rsync:// URL connects to an rsync daemon (fails here).",
+      "flag": ""
+    },
+    {
+      "id": "rsync.list.control",
+      "tool": "rsync",
+      "argv": [
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: rsync with only a source lists it and writes nothing."
+    },
+    {
+      "id": "rsync.only-write-batch",
+      "tool": "rsync",
+      "argv": [
+        "--only-write-batch=<<out>>",
+        "<<hello>>",
+        "<<outdir>>/"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--only-write-batch=FILE` does not update the destination but still writes FILE plus a FILE.sh replay script. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--only-write-batch",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

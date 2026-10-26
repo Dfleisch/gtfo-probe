@@ -1,0 +1,139 @@
+{
+  "probes": [
+    {
+      "id": "node.print.control",
+      "tool": "node",
+      "argv": [
+        "-e",
+        "console.log(1)"
+      ],
+      "expect": [],
+      "description": "CONTROL: harmless code passed with -e."
+    },
+    {
+      "id": "node.script.control",
+      "tool": "node",
+      "argv": [
+        "<<jsscript>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: running a harmless script file."
+    },
+    {
+      "id": "node.check.control",
+      "tool": "node",
+      "argv": [
+        "--check",
+        "<<jsscript>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `--check` only syntax-checks a script.",
+      "flag": "--check"
+    },
+    {
+      "id": "node.eval-exec",
+      "tool": "node",
+      "argv": [
+        "-p",
+        "require('child_process').spawnSync('<<canary_exec>>').status"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "BY DESIGN: `-p/-e CODE` runs any JavaScript, including child_process.",
+      "flag": "-p",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "node.eval-write",
+      "tool": "node",
+      "argv": [
+        "-e",
+        "require('fs').writeFileSync('<<out>>','x')"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "BY DESIGN: JavaScript can write any file the process may write.",
+      "flag": "-e",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "node.eval-write-long",
+      "tool": "node",
+      "argv": [
+        "--eval=require('fs').writeFileSync('<<out>>','x')"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--eval=CODE` is the long spelling of -e.",
+      "flag": "--eval",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "node.eval-write-abbrev",
+      "tool": "node",
+      "argv": [
+        "--ev=require('fs').writeFileSync('<<out>>','x')"
+      ],
+      "expect": [],
+      "description": "NEGATIVE CONTROL: node does NOT accept abbreviated long options (`bad option`), so nothing runs.",
+      "flag": "--ev"
+    },
+    {
+      "id": "node.net",
+      "tool": "node",
+      "argv": [
+        "-e",
+        "require('http').get('<<url>>', r => {}).on('error', e => console.log(String(e)))"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "BY DESIGN: JavaScript can open network connections.",
+      "flag": "-e",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "node.cpu-prof",
+      "tool": "node",
+      "argv": [
+        "--cpu-prof",
+        "--cpu-prof-dir=<<outdir>>",
+        "<<jsscript>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--cpu-prof-dir=DIR` makes node write a profile file into DIR.",
+      "flag": "--cpu-prof-dir"
+    },
+    {
+      "id": "node.heap-prof",
+      "tool": "node",
+      "argv": [
+        "--heap-prof",
+        "--heap-prof-dir=<<outdir>>",
+        "<<jsscript>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--heap-prof` writes a .heapprofile on exit (cwd, or --heap-prof-dir). Same class as node.cpu-prof. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--heap-prof",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

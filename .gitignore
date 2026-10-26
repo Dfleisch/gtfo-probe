@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+# generated output; commit examples deliberately under docs/ instead
+/capabilities.json

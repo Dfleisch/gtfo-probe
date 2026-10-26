@@ -1,0 +1,10 @@
+# Example Codex execution-policy rules (~/.codex/rules/default.rules).
+prefix_rule(
+    pattern = ["git", "show"],
+    decision = "allow",
+    justification = "Read a commit",
+)
+prefix_rule(pattern = ["tar", "-tf"])
+prefix_rule(pattern = ["sed", "-n"], decision = "allow")
+prefix_rule(pattern = ["gh", ["pr", "issue"], "view"], decision = "allow")
+prefix_rule(pattern = ["git", "push"], decision = "forbidden")

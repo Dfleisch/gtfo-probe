@@ -1,0 +1,50 @@
+{
+  "probes": [
+    {
+      "id": "grep.plain.control",
+      "tool": "grep",
+      "argv": [
+        "hello",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: search a file."
+    },
+    {
+      "id": "grep.recursive.control",
+      "tool": "grep",
+      "argv": [
+        "-r",
+        "hello",
+        "<<data>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: search a directory tree.",
+      "flag": "-r"
+    },
+    {
+      "id": "grep.perl.control",
+      "tool": "grep",
+      "argv": [
+        "-P",
+        "hel+o",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: Perl-style patterns.",
+      "flag": "-P"
+    },
+    {
+      "id": "grep.patterns-from-file.control",
+      "tool": "grep",
+      "argv": [
+        "-f",
+        "<<secret>>",
+        "<<hello>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-f FILE` reads patterns from a file (can be used to probe whether a secret's text appears elsewhere; reading is outside our effect list).",
+      "flag": "-f"
+    }
+  ]
+}

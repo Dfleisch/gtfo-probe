@@ -1,0 +1,72 @@
+{
+  "probes": [
+    {
+      "id": "mawk.print.control",
+      "tool": "mawk",
+      "argv": [
+        "BEGIN{print \"hi\"}"
+      ],
+      "expect": [],
+      "description": "CONTROL: a program that only prints."
+    },
+    {
+      "id": "mawk.system",
+      "tool": "mawk",
+      "argv": [
+        "BEGIN{system(\"<<canary_exec>>\")}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "The `system()` function runs a shell command.",
+      "flag": "system()"
+    },
+    {
+      "id": "mawk.pipe-out",
+      "tool": "mawk",
+      "argv": [
+        "BEGIN{print \"x\" | \"<<canary_exec>>\"}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`print | \"cmd\"` pipes output into a command (starts it).",
+      "flag": "print |"
+    },
+    {
+      "id": "mawk.getline-cmd",
+      "tool": "mawk",
+      "argv": [
+        "BEGIN{\"<<canary_exec>>\" | getline x}"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`\"cmd\" | getline` runs a command and reads its output.",
+      "flag": "cmd | getline"
+    },
+    {
+      "id": "mawk.redirect-file",
+      "tool": "mawk",
+      "argv": [
+        "BEGIN{print \"x\" > \"<<out>>\"}"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`print > \"file\"` creates/overwrites a file.",
+      "flag": ">"
+    },
+    {
+      "id": "mawk.dump.control",
+      "tool": "mawk",
+      "argv": [
+        "-W",
+        "dump",
+        "BEGIN{print 1}"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-W dump` prints the compiled program to stdout and writes nothing."
+    }
+  ]
+}

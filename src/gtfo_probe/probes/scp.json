@@ -1,0 +1,71 @@
+{
+  "probes": [
+    {
+      "id": "scp.usage.control",
+      "tool": "scp",
+      "argv": [],
+      "expect": [],
+      "description": "CONTROL: with no arguments scp prints its usage and does nothing."
+    },
+    {
+      "id": "scp.program",
+      "tool": "scp",
+      "argv": [
+        "-S",
+        "<<canary_exec>>",
+        "<<hello>>",
+        "example.invalid:/tmp/x"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-S PROGRAM` replaces ssh with PROGRAM as the transport.",
+      "flag": "-S"
+    },
+    {
+      "id": "scp.proxycommand",
+      "tool": "scp",
+      "argv": [
+        "-o",
+        "ProxyCommand=<<canary_exec>>",
+        "<<hello>>",
+        "example.invalid:/tmp/x"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-o ProxyCommand=CMD` is passed through to ssh and runs CMD.",
+      "flag": "-o ProxyCommand"
+    },
+    {
+      "id": "scp.local-copy",
+      "tool": "scp",
+      "argv": [
+        "<<hello>>",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "scp with two local paths just copies a file locally.",
+      "flag": ""
+    },
+    {
+      "id": "scp.remote",
+      "tool": "scp",
+      "argv": [
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=2",
+        "<<hello>>",
+        "192.0.2.1:/tmp/x"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "Copying to host:path is a network connection (fails here).",
+      "flag": ""
+    }
+  ]
+}

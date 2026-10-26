@@ -1,0 +1,51 @@
+{
+  "probes": [
+    {
+      "id": "unzip.list.control",
+      "tool": "unzip",
+      "argv": [
+        "-l",
+        "<<zipfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: list an archive.",
+      "flag": "-l"
+    },
+    {
+      "id": "unzip.test.control",
+      "tool": "unzip",
+      "argv": [
+        "-t",
+        "<<zipfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: test an archive.",
+      "flag": "-t"
+    },
+    {
+      "id": "unzip.pipe.control",
+      "tool": "unzip",
+      "argv": [
+        "-p",
+        "<<zipfile>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-p` extracts to stdout only.",
+      "flag": "-p"
+    },
+    {
+      "id": "unzip.extract",
+      "tool": "unzip",
+      "argv": [
+        "<<zipfile>>",
+        "-d",
+        "<<outdir>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Extracting writes files (`-d DIR` chooses where).",
+      "flag": "-d"
+    }
+  ]
+}

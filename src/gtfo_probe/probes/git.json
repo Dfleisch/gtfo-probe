@@ -1,0 +1,169 @@
+{
+  "probes": [
+    {
+      "id": "git.log.control",
+      "tool": "git",
+      "argv": [
+        "log",
+        "--oneline"
+      ],
+      "expect": [],
+      "description": "CONTROL: plain read-only usage; must show no effects."
+    },
+    {
+      "id": "git.show.control",
+      "tool": "git",
+      "argv": [
+        "show",
+        "HEAD"
+      ],
+      "expect": [],
+      "description": "CONTROL: plain `git show`; must show no effects."
+    },
+    {
+      "id": "git.status.plain",
+      "tool": "git",
+      "argv": [
+        "status"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Surprising 'read-only' command: plain `git status` refreshes (writes) .git/index. Environment-dependent: the fixture's copied files have stale stat info."
+    },
+    {
+      "id": "git.status.no-optional-locks",
+      "tool": "git",
+      "argv": [
+        "--no-optional-locks",
+        "status"
+      ],
+      "expect": [],
+      "description": "CONTROL/mitigation: --no-optional-locks stops status from writing the index.",
+      "flag": "--no-optional-locks"
+    },
+    {
+      "id": "git.show.output",
+      "tool": "git",
+      "argv": [
+        "show",
+        "--output=<<out>>",
+        "HEAD"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--output=FILE` makes git show write its result to FILE instead of stdout.",
+      "flag": "--output"
+    },
+    {
+      "id": "git.log.output",
+      "tool": "git",
+      "argv": [
+        "log",
+        "--output=<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Same diff-machinery flag reachable through `git log`.",
+      "flag": "--output"
+    },
+    {
+      "id": "git.diff.output",
+      "tool": "git",
+      "argv": [
+        "diff",
+        "--output=<<out>>",
+        "HEAD~1",
+        "HEAD"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Same flag through `git diff`.",
+      "flag": "--output"
+    },
+    {
+      "id": "git.show.output-abbrev",
+      "tool": "git",
+      "argv": [
+        "show",
+        "--outpu=<<out>>",
+        "HEAD"
+      ],
+      "expect": [],
+      "description": "NEGATIVE RESULT: git's diff options do NOT accept abbreviations (git 2.47), so this must have no effect. Kept so a future git version that changes this shows up as a diff.",
+      "flag": "--outpu"
+    },
+    {
+      "id": "git.ls-remote.upload-pack",
+      "tool": "git",
+      "argv": [
+        "ls-remote",
+        "--upload-pack=<<canary_exec>>",
+        "<<repo>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--upload-pack=CMD` names a program git runs to talk to the 'remote'.",
+      "flag": "--upload-pack"
+    },
+    {
+      "id": "git.ls-remote.upload-pack-abbrev",
+      "tool": "git",
+      "argv": [
+        "ls-remote",
+        "--upload-pa=<<canary_exec>>",
+        "<<repo>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "git's parse-options accepts unambiguous PREFIXES of long options: --upload-pa works like --upload-pack, so a deny rule matching the exact string '--upload-pack' is bypassed.",
+      "flag": "--upload-pa"
+    },
+    {
+      "id": "git.grep.open-files-in-pager",
+      "tool": "git",
+      "argv": [
+        "grep",
+        "--open-files-in-pager=<<canary_exec>>",
+        "hello"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-O CMD` runs CMD with the matching files as arguments.",
+      "flag": "--open-files-in-pager"
+    },
+    {
+      "id": "git.status.config-fsmonitor",
+      "tool": "git",
+      "argv": [
+        "-c",
+        "core.fsmonitor=<<canary_exec>>",
+        "status"
+      ],
+      "expect": [
+        "exec",
+        "fs_write"
+      ],
+      "description": "`-c key=value` injects config; core.fsmonitor names a program git runs on status. (fs_write is plain `git status` refreshing .git/index, see git.status.plain.)",
+      "flag": "-c"
+    },
+    {
+      "id": "git.ls-remote.url",
+      "tool": "git",
+      "argv": [
+        "ls-remote",
+        "<<url>>"
+      ],
+      "expect": [
+        "net"
+      ],
+      "description": "Subcommand-level (not flag-level): ls-remote with a URL is a network client."
+    }
+  ]
+}

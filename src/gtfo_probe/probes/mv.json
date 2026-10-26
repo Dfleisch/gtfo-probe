@@ -1,0 +1,55 @@
+{
+  "probes": [
+    {
+      "id": "mv.rename",
+      "tool": "mv",
+      "argv": [
+        "<<victim>>",
+        "<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Moving deletes the source and creates the destination.",
+      "flag": ""
+    },
+    {
+      "id": "mv.no-clobber.control",
+      "tool": "mv",
+      "argv": [
+        "-n",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-n` refuses to overwrite.",
+      "flag": "-n"
+    },
+    {
+      "id": "mv.target-directory",
+      "tool": "mv",
+      "argv": [
+        "--target-directory=<<outdir>>",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--target-directory=DIR` moves into DIR.",
+      "flag": "--target-directory"
+    },
+    {
+      "id": "mv.target-directory-abbrev",
+      "tool": "mv",
+      "argv": [
+        "--target-d=<<outdir>>",
+        "<<victim>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Unambiguous prefix works.",
+      "flag": "--target-d"
+    }
+  ]
+}

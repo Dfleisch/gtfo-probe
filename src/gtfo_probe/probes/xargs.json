@@ -1,0 +1,62 @@
+{
+  "probes": [
+    {
+      "id": "xargs.no-run-if-empty.control",
+      "tool": "xargs",
+      "argv": [
+        "-r",
+        "<<canary_exec>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: `-r` means do nothing when stdin is empty (the sandbox gives xargs an empty stdin), so the command is NOT run.",
+      "flag": "-r"
+    },
+    {
+      "id": "xargs.runner",
+      "tool": "xargs",
+      "argv": [
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "BY DESIGN: xargs runs the command you give it (GNU xargs with empty stdin still runs it once, without -r).",
+      "flag": "",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "xargs.arg-file",
+      "tool": "xargs",
+      "argv": [
+        "--arg-file=<<hello>>",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--arg-file=FILE` reads arguments from FILE and runs the command with them.",
+      "flag": "--arg-file",
+      "tags": [
+        "runner"
+      ]
+    },
+    {
+      "id": "xargs.arg-file-abbrev",
+      "tool": "xargs",
+      "argv": [
+        "--ar=<<hello>>",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "Unambiguous prefix of --arg-file works (getopt_long).",
+      "flag": "--ar",
+      "tags": [
+        "runner"
+      ]
+    }
+  ]
+}

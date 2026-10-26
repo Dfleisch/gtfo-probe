@@ -1,0 +1,563 @@
+{
+  "allowlist": {
+    "format": "claude",
+    "path": "docs/examples/claude-settings.json"
+  },
+  "db": {
+    "generated_at": "2026-10-26T16:18:11Z",
+    "generator": "gtfo-probe 0.1.0",
+    "tool_versions": [
+      "cat@9.7",
+      "cp@9.7",
+      "curl@8.14.1",
+      "diff@3.10",
+      "env@9.7",
+      "find@4.10.0",
+      "gawk@5.2.1",
+      "git@2.47.3",
+      "grep@3.11",
+      "gzip@1.13",
+      "head@9.7",
+      "ls@9.7",
+      "make@4.4.1",
+      "mawk@1.3.4",
+      "mv@9.7",
+      "node@20.19.2",
+      "npm@11.21.1",
+      "npx@11.21.1",
+      "pip@25.1.1",
+      "python3@3.13.5",
+      "rsync@3.5.0",
+      "scp@10.0",
+      "sed@4.9",
+      "sort@9.7",
+      "ssh@10.0",
+      "tail@9.7",
+      "tar@1.35",
+      "unzip@6.00",
+      "wget@1.25.0",
+      "xargs@4.10.0",
+      "zip@3.0"
+    ]
+  },
+  "disclaimer": "Results reflect only the probes that were run, on the tool versions listed above. \"no known risk\" means probes saw no effect; \"UNKNOWN\" means nothing was tested. Neither means safe. Not modelled: READING files (a `cat` or `grep` entry can still read secrets).",
+  "entries": [
+    {
+      "any_args": true,
+      "findings": [
+        {
+          "abbreviation": {
+            "flag": "--outpu",
+            "probe": "git.show.output-abbrev",
+            "status": "rejected"
+          },
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`--output=FILE` makes git show write its result to FILE instead of stdout.",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(git show <the exact arguments>)`), or remove this entry.",
+          "flag": "--output",
+          "probe": "git.show.output",
+          "severity": "high",
+          "tool_version": "git@2.47.3"
+        }
+      ],
+      "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(git show <the exact arguments>)`), or remove this entry.",
+      "kind": "command",
+      "notes": [
+        "agent note: Claude Code auto-allows read-only forms of `git` with NO allow rule (built-in, not configurable), so removing this entry does not stop them; add an `ask`/`deny` rule to force a prompt.",
+        "agent note: Claude Code prompts for `git` when the command has an unquoted glob (it could expand to a flag); a flag typed out literally is not covered by that check.",
+        "agent note: Claude Code checks `>`/`>>`/`tee` targets against Edit rules, but its docs list no such check for a file written by a flag (e.g. `--output`); Edit deny rules do not cover it, use the OS sandbox.",
+        "agent notes are Claude Code's documented behaviour (https://code.claude.com/docs/en/permissions), not probe data",
+        "recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook."
+      ],
+      "pinned_words": [
+        "show"
+      ],
+      "probes_in_scope": 3,
+      "raw": "Bash(git show:*)",
+      "status": "findings",
+      "tool": "git",
+      "tool_versions": [
+        "git@2.47.3"
+      ]
+    },
+    {
+      "any_args": true,
+      "findings": [
+        {
+          "abbreviation": {
+            "flag": "--upload-pa",
+            "probe": "git.ls-remote.upload-pack-abbrev",
+            "status": "works"
+          },
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`--upload-pack=CMD` names a program git runs to talk to the 'remote'.",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=/work/repo",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(git ls-remote <the exact arguments>)`), or remove this entry. Denying `--upload-pack` is not enough: `--upload-pa` also works.",
+          "flag": "--upload-pack",
+          "probe": "git.ls-remote.upload-pack",
+          "severity": "critical",
+          "tool_version": "git@2.47.3"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "attempted",
+          "description": "Subcommand-level (not flag-level): ls-remote with a URL is a network client.",
+          "effect": "net",
+          "evidence": "network attempt: fatal: unable to access 'http://192.0.2.1:9/gtfo-canary/': Failed to c",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(git ls-remote <the exact arguments>)`), or remove this entry.",
+          "flag": "",
+          "probe": "git.ls-remote.url",
+          "severity": "medium",
+          "tool_version": "git@2.47.3"
+        }
+      ],
+      "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(git ls-remote <the exact arguments>)`), or remove this entry.",
+      "kind": "command",
+      "notes": [
+        "agent note: Claude Code auto-allows read-only forms of `git` with NO allow rule (built-in, not configurable), so removing this entry does not stop them; add an `ask`/`deny` rule to force a prompt.",
+        "agent note: Claude Code prompts for `git` when the command has an unquoted glob (it could expand to a flag); a flag typed out literally is not covered by that check.",
+        "agent notes are Claude Code's documented behaviour (https://code.claude.com/docs/en/permissions), not probe data",
+        "recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook."
+      ],
+      "pinned_words": [
+        "ls-remote"
+      ],
+      "probes_in_scope": 3,
+      "raw": "Bash(git ls-remote:*)",
+      "status": "findings",
+      "tool": "git",
+      "tool_versions": [
+        "git@2.47.3"
+      ]
+    },
+    {
+      "any_args": true,
+      "findings": [
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "A checkpoint action can exec a program (needs the companion --checkpoint to trigger).",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "--checkpoint-action",
+          "probe": "tar.checkpoint-action-exec",
+          "severity": "critical",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`--to-command=CMD` pipes each extracted file into CMD.",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "--to-command",
+          "probe": "tar.to-command",
+          "severity": "critical",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": {
+            "flag": "--use-compress-prog",
+            "probe": "tar.use-compress-program-abbrev",
+            "status": "works"
+          },
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-I PROG` names an external (de)compressor program tar runs.",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=-d",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry. Denying `-I` is not enough: `--use-compress-prog` also works.",
+          "flag": "-I",
+          "probe": "tar.use-compress-program",
+          "severity": "critical",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`--delete` removes members from the -f archive in place. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file modified: data/sample.tar",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "--delete",
+          "probe": "tar.delete",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": {
+            "flag": "--index",
+            "probe": "tar.index-file-abbrev",
+            "status": "works"
+          },
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`--index-file=FILE` sends the (verbose) listing to FILE: a plain `tar -t` listing becomes a write to any path, overwriting existing files. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry. Denying `--index-file` is not enough: `--index` also works.",
+          "flag": "--index-file",
+          "probe": "tar.index-file",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`--volno-file=FILE` writes the volume number to FILE even without --multi-volume, during a plain listing. It refuses an existing file that does not hold a number, so it creates new files rather than clobbering arbitrary ones. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "--volno-file",
+          "probe": "tar.volno-file",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-A/--catenate` appends tar files to the -f archive (archive content changes). Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file modified: data/sample.tar",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "-A",
+          "probe": "tar.catenate",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-c -f FILE` creates an archive file.",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "-cf",
+          "probe": "tar.create",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-r/--append` appends files to the -f archive. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file modified: data/sample.tar",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "-r",
+          "probe": "tar.append",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-u/--update` appends files newer than the archived copy to the -f archive. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file modified: data/sample.tar",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "-u",
+          "probe": "tar.update",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-x` extracts files to disk.",
+          "effect": "fs_write",
+          "evidence": "file modified: data/hello.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+          "flag": "-x",
+          "probe": "tar.extract",
+          "severity": "high",
+          "tool_version": "tar@1.35"
+        }
+      ],
+      "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(tar <the exact arguments>)`), or remove this entry.",
+      "kind": "command",
+      "notes": [
+        "agent note: Claude Code checks `>`/`>>`/`tee` targets against Edit rules, but its docs list no such check for a file written by a flag (e.g. `--delete`); Edit deny rules do not cover it, use the OS sandbox.",
+        "agent notes are Claude Code's documented behaviour (https://code.claude.com/docs/en/permissions), not probe data",
+        "recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook."
+      ],
+      "pinned_words": [],
+      "probes_in_scope": 14,
+      "raw": "Bash(tar:*)",
+      "status": "findings",
+      "tool": "tar",
+      "tool_versions": [
+        "tar@1.35"
+      ]
+    },
+    {
+      "any_args": true,
+      "findings": [
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-exec CMD ;` runs CMD for each match.",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=.",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-exec",
+          "probe": "find.exec",
+          "severity": "critical",
+          "tool_version": "find@4.10.0"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-execdir` is `-exec` run from the match's directory.",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=./.",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-execdir",
+          "probe": "find.execdir",
+          "severity": "critical",
+          "tool_version": "find@4.10.0"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-delete` removes every match.",
+          "effect": "fs_write",
+          "evidence": "file deleted: canary/victim.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-delete",
+          "probe": "find.delete",
+          "severity": "high",
+          "tool_version": "find@4.10.0"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-fls FILE` writes an ls-style listing to FILE.",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-fls",
+          "probe": "find.fls",
+          "severity": "high",
+          "tool_version": "find@4.10.0"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-fprint FILE` writes results to FILE.",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-fprint",
+          "probe": "find.fprint",
+          "severity": "high",
+          "tool_version": "find@4.10.0"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-fprint0 FILE` writes NUL-separated names to FILE (truncating it), like -fprint. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-fprint0",
+          "probe": "find.fprint0",
+          "severity": "high",
+          "tool_version": "find@4.10.0"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "`-fprintf FILE FORMAT` writes formatted results to FILE.",
+          "effect": "fs_write",
+          "evidence": "file created: out/probe-output.txt",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+          "flag": "-fprintf",
+          "probe": "find.fprintf",
+          "severity": "high",
+          "tool_version": "find@4.10.0"
+        }
+      ],
+      "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(find . -name <the exact arguments>)`), or remove this entry.",
+      "kind": "command",
+      "notes": [
+        "pinned words are not analysed; all probes for this tool count",
+        "agent note: Claude Code's docs say a `find` prefix rule cannot auto-approve find with an action that runs commands, deletes or writes files (-exec, -delete, -fprint...) or with -files0-from: it still prompts in Manual mode. Not modelled here; verify on your agent version.",
+        "agent note: Claude Code auto-allows read-only uses of `find` with NO allow rule (built-in, not configurable), so removing this entry does not stop them; add an `ask`/`deny` rule to force a prompt.",
+        "agent note: Claude Code prompts for `find` when the command has an unquoted glob (it could expand to a flag); a flag typed out literally is not covered by that check.",
+        "agent note: Claude Code checks `>`/`>>`/`tee` targets against Edit rules, but its docs list no such check for a file written by a flag (e.g. `-delete`); Edit deny rules do not cover it, use the OS sandbox.",
+        "agent notes are Claude Code's documented behaviour (https://code.claude.com/docs/en/permissions), not probe data",
+        "recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook."
+      ],
+      "pinned_words": [
+        ".",
+        "-name"
+      ],
+      "probes_in_scope": 9,
+      "raw": "Bash(find . -name *)",
+      "status": "findings",
+      "tool": "find",
+      "tool_versions": [
+        "find@4.10.0"
+      ]
+    },
+    {
+      "any_args": false,
+      "findings": [],
+      "fix": "",
+      "kind": "command",
+      "notes": [
+        "words after the subcommand are not analysed; all probes for the subcommand count",
+        "exact entry: only flags literally written in it were checked",
+        "agent note: Claude Code auto-allows read-only forms of `git` with NO allow rule (built-in, not configurable), so removing this entry does not stop them; add an `ask`/`deny` rule to force a prompt.",
+        "agent notes are Claude Code's documented behaviour (https://code.claude.com/docs/en/permissions), not probe data",
+        "probes for this scope showed no effect; that is not a proof of safety"
+      ],
+      "pinned_words": [
+        "diff",
+        "HEAD"
+      ],
+      "probes_in_scope": 1,
+      "raw": "Bash(git diff HEAD)",
+      "status": "no_known_risk",
+      "tool": "git",
+      "tool_versions": [
+        "git@2.47.3"
+      ]
+    },
+    {
+      "any_args": true,
+      "findings": [
+        {
+          "abbreviation": null,
+          "by_design": true,
+          "confidence": "confirmed",
+          "description": "this part of npm exists to run other programs or code you hand it, so an entry that allows arguments allows arbitrary exec (and, through that, any file write and network access).",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=",
+          "fix": "remove this entry or pin the exact command: write the whole command with no `*`/`:*`, e.g. `Bash(npm run test <the exact arguments>)`. There is no safe flag list for a runner tool.",
+          "flag": "",
+          "probe": "npm.run",
+          "severity": "critical",
+          "tool_version": "npm@11.21.1"
+        },
+        {
+          "abbreviation": null,
+          "by_design": false,
+          "confidence": "confirmed",
+          "description": "BASELINE: even a plain `npm ls` creates ~/.npm/_logs (a debug log), on npm 9 and npm 11 alike; npm is never strictly read-only.",
+          "effect": "fs_write",
+          "evidence": "file created: home/.npm",
+          "fix": "pin the exact command (write the whole command with no `*`/`:*`, e.g. `Bash(npm run test <the exact arguments>)`), or remove this entry.",
+          "flag": "",
+          "probe": "npm.ls.baseline",
+          "severity": "low",
+          "tool_version": "npm@11.21.1"
+        }
+      ],
+      "fix": "remove this entry or pin the exact command: write the whole command with no `*`/`:*`, e.g. `Bash(npm run test <the exact arguments>)`. There is no safe flag list for a runner tool.",
+      "kind": "command",
+      "notes": [
+        "words after the subcommand are not analysed; all probes for the subcommand count",
+        "recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook."
+      ],
+      "pinned_words": [
+        "run",
+        "test"
+      ],
+      "probes_in_scope": 3,
+      "raw": "Bash(npm run test:*)",
+      "status": "findings",
+      "tool": "npm",
+      "tool_versions": [
+        "npm@11.21.1"
+      ]
+    },
+    {
+      "any_args": true,
+      "findings": [
+        {
+          "abbreviation": null,
+          "by_design": true,
+          "confidence": "confirmed",
+          "description": "python3 exists to run other programs or code you hand it, so an entry that allows arguments allows arbitrary exec (and, through that, any file write and network access).",
+          "effect": "exec",
+          "evidence": "canary program ran: canary-exec ran: argv=",
+          "fix": "remove this entry or pin the exact command: write the whole command with no `*`/`:*`, e.g. `Bash(python3 <the exact arguments>)`. There is no safe flag list for a runner tool.",
+          "flag": "",
+          "probe": "python3.code-exec",
+          "severity": "critical",
+          "tool_version": "python3@3.13.5"
+        }
+      ],
+      "fix": "remove this entry or pin the exact command: write the whole command with no `*`/`:*`, e.g. `Bash(python3 <the exact arguments>)`. There is no safe flag list for a runner tool.",
+      "kind": "command",
+      "notes": [
+        "recommendation: deny by CAPABILITY, not by flag string: spellings (abbreviations, config flags like `git -c`, wrappers, full paths) dodge string rules, so also run the agent's shell in an OS sandbox (no network, read-only except the project) or check the whole argv in a hook."
+      ],
+      "pinned_words": [],
+      "probes_in_scope": 6,
+      "raw": "Bash(python3:*)",
+      "status": "findings",
+      "tool": "python3",
+      "tool_versions": [
+        "python3@3.13.5"
+      ]
+    },
+    {
+      "any_args": true,
+      "findings": [],
+      "fix": "",
+      "kind": "skipped",
+      "notes": [
+        "not a Bash rule; not analysed"
+      ],
+      "pinned_words": [],
+      "probes_in_scope": 0,
+      "raw": "Read(./src/**)",
+      "status": "skipped",
+      "tool": "",
+      "tool_versions": []
+    }
+  ],
+  "schema_version": 1,
+  "summary": {
+    "by_status": {
+      "findings": 6,
+      "no_known_risk": 1,
+      "skipped": 1
+    },
+    "entries": 8,
+    "entries_critical_by_design": 2,
+    "findings_by_severity": {
+      "critical": 8,
+      "high": 14,
+      "low": 1,
+      "medium": 1
+    }
+  }
+}

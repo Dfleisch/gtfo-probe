@@ -1,0 +1,228 @@
+{
+  "probes": [
+    {
+      "id": "tar.list.control",
+      "tool": "tar",
+      "argv": [
+        "-tf",
+        "<<archive>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: listing an archive."
+    },
+    {
+      "id": "tar.create",
+      "tool": "tar",
+      "argv": [
+        "-cf",
+        "<<out>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-c -f FILE` creates an archive file.",
+      "flag": "-cf"
+    },
+    {
+      "id": "tar.extract",
+      "tool": "tar",
+      "argv": [
+        "-xf",
+        "<<archive>>",
+        "-C",
+        "<<data>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-x` extracts files to disk.",
+      "flag": "-x"
+    },
+    {
+      "id": "tar.use-compress-program",
+      "tool": "tar",
+      "argv": [
+        "-tf",
+        "<<archive>>",
+        "-I",
+        "<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`-I PROG` names an external (de)compressor program tar runs.",
+      "flag": "-I"
+    },
+    {
+      "id": "tar.use-compress-program-abbrev",
+      "tool": "tar",
+      "argv": [
+        "-tf",
+        "<<archive>>",
+        "--use-compress-prog=<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "Unambiguous prefix of --use-compress-program works the same.",
+      "flag": "--use-compress-prog"
+    },
+    {
+      "id": "tar.checkpoint-action-exec",
+      "tool": "tar",
+      "argv": [
+        "-tf",
+        "<<archive>>",
+        "--checkpoint=1",
+        "--checkpoint-action=exec=<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "A checkpoint action can exec a program (needs the companion --checkpoint to trigger).",
+      "flag": "--checkpoint-action"
+    },
+    {
+      "id": "tar.to-command",
+      "tool": "tar",
+      "argv": [
+        "-xf",
+        "<<archive>>",
+        "--to-command=<<canary_exec>>"
+      ],
+      "expect": [
+        "exec"
+      ],
+      "description": "`--to-command=CMD` pipes each extracted file into CMD.",
+      "flag": "--to-command"
+    },
+    {
+      "id": "tar.catenate",
+      "tool": "tar",
+      "argv": [
+        "-Af",
+        "<<archive>>",
+        "<<archive>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-A/--catenate` appends tar files to the -f archive (archive content changes). Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-A",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "tar.delete",
+      "tool": "tar",
+      "argv": [
+        "--delete",
+        "-f",
+        "<<archive>>",
+        "hello.txt"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--delete` removes members from the -f archive in place. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--delete",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "tar.append",
+      "tool": "tar",
+      "argv": [
+        "-rf",
+        "<<archive>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-r/--append` appends files to the -f archive. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-r",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "tar.update",
+      "tool": "tar",
+      "argv": [
+        "-uf",
+        "<<archive>>",
+        "<<hello>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`-u/--update` appends files newer than the archived copy to the -f archive. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "-u",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "tar.index-file",
+      "tool": "tar",
+      "argv": [
+        "-tf",
+        "<<archive>>",
+        "--index-file=<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--index-file=FILE` sends the (verbose) listing to FILE: a plain `tar -t` listing becomes a write to any path, overwriting existing files. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--index-file",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "tar.index-file-abbrev",
+      "tool": "tar",
+      "argv": [
+        "-tf",
+        "<<archive>>",
+        "--index=<<out>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "Unambiguous prefix of --index-file works the same. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--index",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    },
+    {
+      "id": "tar.volno-file",
+      "tool": "tar",
+      "argv": [
+        "--volno-file=<<out>>",
+        "-tf",
+        "<<archive>>"
+      ],
+      "expect": [
+        "fs_write"
+      ],
+      "description": "`--volno-file=FILE` writes the volume number to FILE even without --multi-volume, during a plain listing. It refuses an existing file that does not hold a number, so it creates new files rather than clobbering arbitrary ones. Found by `gtfo-probe discover`, re-run by hand and reviewed 2026-10-20 (docs/REVIEW-discovered.md).",
+      "flag": "--volno-file",
+      "tags": [
+        "discovered",
+        "reviewed"
+      ]
+    }
+  ]
+}

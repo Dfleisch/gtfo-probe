@@ -1,0 +1,20 @@
+== sed  (sed@4.9) ==
+  help: sed --help                   used (1837 chars)
+  help: sed -h                       ignored: tool rejected it
+  help: sed help                     ignored: does not look like a help page
+  parsed 15 options from help; tested 11; not tested (no hint) 4; over the cap 0
+  CONFIRMED effects (detector saw them, twice):
+    w [seed]
+        fs_write=confirmed; reproduced=True; known: sed.w-command
+        argv: sed -n w <<out>> <<hello>>
+    e [seed]
+        exec=confirmed; reproduced=True; known: sed.e-command
+        argv: sed 1e <<canary_exec>> <<hello>>
+    -i, --in-place
+        fs_write=confirmed; reproduced=True; known: sed.in-place
+        argv: sed --in-place p <<hello>>
+  ran, no effect observed: 8
+      -f, --file; -n, --quiet, --silent; --debug; -e, --expression; -l, --line-length; -E, -r, --regexp-extended; --sandbox; -u, --unbuffered
+  summary: 3 confirmed (3 already covered by hand probes, 0 new), 0 unconfirmed, 8 no effect/rejected/timeout  [0.36s]
+  (report only: nothing written; add --apply to save the NEW confirmed ones)
+

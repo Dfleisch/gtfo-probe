@@ -1,0 +1,50 @@
+{
+  "probes": [
+    {
+      "id": "diff.plain.control",
+      "tool": "diff",
+      "argv": [
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: compare two files."
+    },
+    {
+      "id": "diff.unified.control",
+      "tool": "diff",
+      "argv": [
+        "-u",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: unified output.",
+      "flag": "-u"
+    },
+    {
+      "id": "diff.recursive.control",
+      "tool": "diff",
+      "argv": [
+        "-r",
+        "<<data>>",
+        "<<outdir>>"
+      ],
+      "expect": [],
+      "description": "CONTROL: compare two directories.",
+      "flag": "-r"
+    },
+    {
+      "id": "diff.paginate.control",
+      "tool": "diff",
+      "argv": [
+        "-l",
+        "<<hello>>",
+        "<<victim>>"
+      ],
+      "expect": [],
+      "description": "`-l` pipes the output through the fixed program `pr`. That is a program start we cannot observe (it is not our canary and the name is not controllable), so this is only a control for OUR effect types.",
+      "flag": "-l"
+    }
+  ]
+}
