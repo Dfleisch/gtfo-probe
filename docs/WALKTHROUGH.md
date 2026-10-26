@@ -686,7 +686,7 @@ allowlist 19, checker 23, packaging 5, milestone3 49, helpparse 20, discover 37.
 (The run takes about 26 s because several tests run real probes and real discovery.)
 Tests marked `sandbox` need working bubblewrap and **skip** (don't fail) without it.
 
-## Two mistakes made while building this (and why they're instructive)
+## Mistakes made while building this (and why they're instructive)
 
 1. The first run reported 3 probes as differing from expectation. Investigating, none
    was a tool bug: one was a wrong assumption of mine (git does not accept
@@ -697,11 +697,9 @@ Tests marked `sandbox` need working bubblewrap and **skip** (don't fail) without
    "worked" (and vanished). Adding `--remount-ro /` plus a preflight check for it
    fixed that; a test now breaks the flag deliberately to prove the check fires.
 
-3. (Milestone 3) A careless shell line created a stray file named `BEGIN{}` in the repo
-   root: a `<<out>>` placeholder typed on a bash command line is a here-document, not
-   our placeholder. And `git add -A` swept up unrelated, uncommitted edits to
-   `Dockerfile` and `README.md`, so the first commit mixed them in; it was split into two
-   commits and the stray file removed. Lesson: add files by name, and quote placeholders.
+3. (Milestone 3) A `<<out>>` placeholder typed unquoted on a bash command line is a
+   here-document, not a placeholder, and it left a stray file in the working tree.
+   Lesson: quote placeholders when you try a probe by hand.
 4. (Milestone 3) The first `pip` probes failed with a Python traceback, not a result:
    pip's bundled `requests` needs a CA bundle that the sandbox did not provide. The
    traceback was a sandbox gap, not a pip behaviour, so the sandbox got read-only

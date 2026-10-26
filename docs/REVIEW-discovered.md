@@ -1,6 +1,6 @@
 # Review of the 17 discovered findings
 
-`gtfo-probe discover --all` (milestone 4) reported **17 NEW, confirmed, reproduced** findings:
+`gtfo-probe discover --all` reported **17 NEW, confirmed, reproduced** findings:
 flags whose effect the detector saw twice in the sandbox and that no hand-written probe covered.
 Discovery is a lead generator, not a judge, so each one was reviewed by a person before it went
 into the bundled probe set.

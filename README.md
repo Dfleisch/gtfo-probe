@@ -1,11 +1,19 @@
 # gtfo-probe
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+
 **Find the flags that turn an AI agent's "read-only" commands into file writers, program runners and network clients.**
 
-`gtfo-probe` runs each flag of common command-line tools inside a locked-down sandbox, records what
-really happened, and then audits an agent's allowlist against that evidence.
+If you allow your coding agent to run `pip list`, you have also allowed `pip --python=PROG list`,
+and that runs PROG. `gtfo-probe` tests flags like that one in a locked-down sandbox, records what
+really happened, and then checks your agent's allowlist against that evidence.
 
-> Status: early release (0.1.0). Linux-focused. Read [Limitations](#limitations) before relying on it.
+It is for anyone who writes or reviews command allowlists for Claude Code, Codex or a similar
+agent: developers, security engineers and platform teams.
+
+> Status: early release (0.1.0). Probing runs on Linux. `check` runs anywhere Python does.
+> Read [Limitations](#limitations) before relying on it.
 
 ## The problem
 
@@ -56,60 +64,70 @@ wget, ssh, scp, rsync, zip, unzip and gzip. 71 of the probes are **controls** th
 
 ## Quickstart
 
-Install from source (Python 3.11+, no third-party dependencies):
+You need Git and Python 3.11 or newer. There are no other dependencies.
 
-```
+```bash
 git clone https://github.com/Dfleisch/gtfo-probe
 cd gtfo-probe
-python3 -m venv .venv && . .venv/bin/activate
+python3 -m venv .venv && . .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e .
 ```
 
 ### Check an allowlist (any OS)
 
-`check` needs no sandbox. It only reads a capability database. The repository includes one made
-on Debian 13 (GNU tools) at `docs/examples/capabilities.json`:
+`check` runs nothing. It only reads a capability database. The repository includes one, made on
+Debian 13 with GNU tools, at `docs/examples/capabilities.json`. Try it on the bundled example first:
 
+```bash
+gtfo-probe check docs/examples/claude-realistic-settings.json --db docs/examples/capabilities.json
 ```
+
+Then point it at your own allowlist. It reads Claude Code settings (`~/.claude/settings.json`,
+or `.claude/settings.json` and `.claude/settings.local.json` in a project), Codex `.rules` files
+(such as `~/.codex/rules/default.rules`), or a plain text file with one command per line:
+
+```bash
 gtfo-probe check ~/.claude/settings.json --db docs/examples/capabilities.json
-gtfo-probe check my-allowlist.txt --db docs/examples/capabilities.json --strict   # exit 1 on findings (for CI)
+gtfo-probe check my-allowlist.txt --db docs/examples/capabilities.json --strict   # exits 1 on findings, for CI
 ```
 
 ### Probe your own tools (Linux)
 
-Probing needs [bubblewrap](https://github.com/containers/bubblewrap):
+Probing needs [bubblewrap](https://github.com/containers/bubblewrap) (`bwrap`):
 
-```
-sudo apt install bubblewrap        # or your distribution's package
-gtfo-probe doctor                  # verifies the sandbox; refuses to continue if it is not safe
+```bash
+sudo apt install bubblewrap        # Debian/Ubuntu; use your distribution's package manager otherwise
+gtfo-probe doctor                  # checks the sandbox; refuses to continue if it is not safe
 gtfo-probe run --out capabilities.json
 gtfo-probe check my-allowlist.txt --db capabilities.json
 gtfo-probe discover tar            # report-only flag discovery for one tool
 ```
 
-`run` only probes tools that are installed. It lists the ones it skipped at the end.
-`python -m gtfo_probe` works too, if you prefer not to rely on the `gtfo-probe` script.
+`run` only probes tools that are installed, and it lists the ones it skipped. A full run takes
+well under a minute. Use `--tool NAME` to probe just one tool, and `gtfo-probe list` to see every
+probe without running anything.
 
 Run this on a disposable machine or VM. See [Threat model](#threat-model).
 
-### Probe with Docker (macOS, Windows, or Linux without bubblewrap)
+### Probe with Docker (experimental)
 
-```
+For macOS, Windows, or Linux without bubblewrap. On Windows, WSL2 is plain Linux, so the native
+steps above also work there.
+
+```bash
 docker build -t gtfo-probe .
 # check needs nothing special:
-docker run --rm -v "$PWD:/data:ro" gtfo-probe check /data/allowlist.txt --db /data/capabilities.json
-# probing needs user namespaces AND a fresh /proc, so both of these flags are required:
+docker run --rm -v "$PWD:/data:ro" gtfo-probe check /data/docs/examples/allowlist.txt --db /data/docs/examples/capabilities.json
+# probing needs user namespaces and a fresh /proc, so both flags are required:
 FLAGS="--security-opt seccomp=unconfined --security-opt systempaths=unconfined"
 docker run --rm $FLAGS gtfo-probe doctor
 docker run --rm $FLAGS -v "$PWD:/out" gtfo-probe run --out /out/capabilities.json
 ```
 
-What was verified on Debian 13 with Docker Engine 26.1: with Docker's defaults, `doctor` fails.
-Either flag on its own also fails. Both together work. Keep the image's default non-root `probe`
-user, because running the container as root failed in testing. Docker Desktop on macOS and
-Windows, Podman, and Ubuntu hosts (which may also need `--security-opt apparmor=unconfined`) are
-not tested yet. The current 221-probe set has not been re-run in Docker yet, so run `doctor`
-and `run --strict` first. On Windows, WSL2 is plain Linux, so the native steps apply.
+Tested on Debian 13 with Docker Engine 26.1, with an earlier, smaller probe set. Docker's
+defaults fail `doctor`, and so does either flag on its own. Keep the image's default non-root
+`probe` user. Docker Desktop, Podman and Ubuntu hosts (which may also need
+`--security-opt apparmor=unconfined`) are not tested yet, so run `doctor` and `run --strict` first.
 
 ## Example output
 
@@ -117,7 +135,7 @@ A realistic Claude Code `settings.json` with 20 rules
 ([input](docs/examples/claude-realistic-settings.json),
 [full output](docs/examples/claude-realistic-settings.json.out.txt)). Trimmed:
 
-```
+```text
 [HIGH] Bash(git log *)   [git log ...]
     high     fs_write via --output  (probe git.log.output, confirmed, git@2.47.3)
              evidence: file created: out/probe-output.txt
@@ -176,14 +194,16 @@ tour of the code in reading order is in [docs/WALKTHROUGH.md](docs/WALKTHROUGH.m
 
 ## Supported allowlist formats
 
-| Format | What is read | Reference |
-|---|---|---|
-| Plain text | one command prefix per line | n/a |
-| Claude Code `settings.json` | `permissions.allow` `Bash(...)` rules, including `:*`, `*`, a leading `*` and wrappers such as `timeout`; `ask`/`deny` noted | <https://code.claude.com/docs/en/permissions> |
-| Codex `.rules` | `prefix_rule(pattern=[...])` entries | <https://learn.chatgpt.com/docs/agent-configuration/rules> |
+| Format | What is read |
+|---|---|
+| Plain text | One command prefix per line. |
+| Claude Code `settings.json` | `Bash(...)` rules in `permissions.allow`, including `:*`, `*`, a leading `*`, and wrappers such as `timeout`. `ask` and `deny` rules are noted. |
+| Codex `.rules` | `prefix_rule(pattern=[...])` entries. |
 
-Both agent formats were checked against these docs in October 2026 (Claude Code 2.1.303). If an
-agent changes its matching rules, `check` may read them differently. Please open an issue.
+Both agent formats were checked in October 2026 (Claude Code 2.1.303) against the
+[Claude Code permissions docs](https://code.claude.com/docs/en/permissions) and the
+[Codex rules docs](https://learn.chatgpt.com/docs/agent-configuration/rules). If an agent changes
+its matching rules, `check` may read them differently. Please open an issue if you spot one.
 
 ## Threat model
 
@@ -234,6 +254,7 @@ nothing and is safe to run anywhere.
 ## Responsible use
 
 This is a defensive tool. It exists to help people tighten the permissions they give AI agents.
+Use it on your own systems and allowlists.
 
 - Probes run only inside the verified sandbox, against canary files and a reserved documentation
   IP range (192.0.2.0/24, RFC 5737). Keep it that way when you add probes.
@@ -272,6 +293,12 @@ Findings from `discover` need a human review before they become probes. Follow t
 
 Development setup: `pip install -e '.[dev]' && pytest`. Tests that need the sandbox are skipped
 when bubblewrap is unavailable.
+
+## Reporting security issues
+
+If you find a bug in gtfo-probe itself, especially one that weakens the sandbox, please report it
+privately with **Report a vulnerability** on the repository's [Security tab](https://github.com/Dfleisch/gtfo-probe/security)
+rather than in a public issue.
 
 ## License
 

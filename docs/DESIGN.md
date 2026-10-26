@@ -243,7 +243,8 @@ probe *can* name), and malicious *tool binaries* on the host.
   tricks (`;`, `$()`, redirection). Those belong to the shell-parsing layer of an
   approval engine, a different problem.
 * **Probing is Linux only** (bubblewrap). `check` runs anywhere. See the README for
-  Docker / WSL2 (the milestone-2 Dockerfile was verified; the enlarged milestone-3 image is not rebuilt yet).
+  Docker / WSL2 (the Docker setup was verified with an earlier, smaller probe set; the current
+  221-probe set has not been re-run in Docker yet).
 * **Observation is of the filesystem under `/work`.** Writes elsewhere fail because
   the root is read-only; we then only see the error text ("Read-only file system"),
   which we record as an `attempted` write.
